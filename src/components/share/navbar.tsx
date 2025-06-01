@@ -59,7 +59,7 @@ export const Navbar = () => {
       <div
         className={`
           md:hidden
-          fixed top-0 left-0 h-full w-64 z-20
+          fixed top-0 left-0 h-full w-64 z-50
           bg-main border-r border-gray-200
           transition-transform duration-300
           ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
@@ -94,7 +94,7 @@ export const Navbar = () => {
       {/* Overlay for mobile menu */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-30 z-10 md:hidden"
+          className="fixed inset-0 bg-black bg-opacity-30 z-50 md:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}

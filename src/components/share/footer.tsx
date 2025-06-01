@@ -10,7 +10,7 @@ export const Footer = () => {
         <LogoBox />
         <Navbar />
       </div>
-      <div className="flex flex-col md:flex-row  items-center justify-center gap-4 p-4 text-sm text-gray-300 z-50">
+      <div className="flex flex-col md:flex-row  md:items-center md:justify-center gap-4 p-4 text-sm text-gray-300">
         <IconInfoBox icon={<Phone />}>
           <div className="flex gap-2">
             <a

@@ -4,8 +4,8 @@ import { Button, VariantButton } from "../share/button";
 
 export const AboutSection = () => {
   return (
-    <section className="flex p-8 md:px-20 relative -top-[120px] -mb-32">
-      <div className="flex flex-col items-center justify-center z-30   w-full h-full bg-main max-w-[1200px] mx-auto p-12 text-white gap-4">
+    <section className="flex p-2 md:px-20 relative top-0 md:top-[-50px] mb-auto md:-mb-14">
+      <div className="flex flex-col items-center justify-center z-20   w-full h-full bg-main max-w-[1200px] mx-auto p-4 md:p-12 text-white gap-4">
         <h2 className="text-4xl md:text-5xl font-bold text-center mb-8 max-w-[790px]">
           Somos especialistas en consultoría y capacitación, ofertamos:
         </h2>

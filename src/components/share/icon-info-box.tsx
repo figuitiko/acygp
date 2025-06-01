@@ -7,7 +7,7 @@ type Props = {
 
 export const IconInfoBox = ({ icon, children }: Props) => {
   return (
-    <div className="flex  items-center justify-center gap-2 p-4 text-center text-white">
+    <div className="flex  items-center md:justify-center gap-2 p-4 text-left md:text-center text-white">
       {icon}
       {children}
     </div>
