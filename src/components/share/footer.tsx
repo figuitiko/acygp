@@ -20,14 +20,6 @@ export const Footer = () => {
             >
               +52 (990) 336-3103
             </a>
-            <span>/</span>
-            <a
-              href="tel:+522461231523"
-              className="hover:underline"
-              target="_blank"
-            >
-              +52 (246) 123-1523
-            </a>
           </div>
         </IconInfoBox>
         <IconInfoBox icon={<Mail />}>
