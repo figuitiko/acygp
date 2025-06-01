@@ -14,6 +14,9 @@ export default {
         main: "var(--main-color)",
         lavender: "var(--lavender)",
       },
+      backgroundImage: {
+        hero: "url('/images/bg-hero.png')",
+      },
     },
   },
   plugins: [],
