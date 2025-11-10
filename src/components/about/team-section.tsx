@@ -1,5 +1,4 @@
 import React from "react";
-import { workerData } from "worker_threads";
 import { WorkerBox, WorkerBoxProps } from "./worker-box";
 import { workersData } from "./constants";
 
