@@ -5,7 +5,7 @@ import { InstagramIcon } from "./icons/instagram";
 
 const navbarLinks = [
   { name: "Nosotros", path: "/about" },
-  { name: "Servicios", path: "/servicios" },
+  // { name: "Servicios", path: "/servicios" },
   { name: "Clientes", path: "/clients" },
   { name: "Cursos", path: "/courses" },
   { name: "Contacto", path: "/contact" },
