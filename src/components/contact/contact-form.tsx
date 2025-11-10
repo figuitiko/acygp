@@ -82,11 +82,17 @@ export const ContactForm = () => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto bg-main p-8 text-white">
-      <form action={formAction} className="flex flex-col gap-4 text-main">
+    <div className=" bg-main flex flex-col items-center p-12 text-white flex-1 ">
+      <h2 className="text-[52px] text-center font-semibold leading-[60px] mb-8">
+        Solicita una asesoría personalizada ahora
+      </h2>
+      <form
+        action={formAction}
+        className="flex flex-col gap-12 text-main max-w-[492px] w-full"
+      >
         <fieldset className="flex flex-col">
           <input
-            className="placeholder:text-main"
+            className="placeholder:text-main rounded-2xl p-2"
             type="text"
             id="name"
             name="name"
@@ -104,7 +110,7 @@ export const ContactForm = () => {
 
         <fieldset className="flex flex-col">
           <input
-            className="placeholder:text-main"
+            className="placeholder:text-main rounded-2xl p-2"
             type="email"
             id="email"
             name="email"
@@ -122,7 +128,7 @@ export const ContactForm = () => {
 
         <fieldset className="flex flex-col">
           <textarea
-            className="placeholder:text-main"
+            className="placeholder:text-main rounded-2xl p-2 h-[150px]  resize-none"
             onChange={handleOnChange}
             id="message"
             name="message"
@@ -145,7 +151,7 @@ export const ContactForm = () => {
             !!errorContactFormData.name ||
             !!errorContactFormData.message
           }
-          className="bg-white text-main px-4 py-2 rounded disabled:opacity-50"
+          className="bg-white text-main px-4 py-2 rounded disabled:opacity-50 w-fit"
         >
           {isPending ? "Enviando..." : "Enviar"}
         </button>

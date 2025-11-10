@@ -1,8 +1,13 @@
-import { ContactForm } from "@/components/contact/contact-form";
+import { HeroContact } from "@/components/contact/hero-contact";
+import { MainWrapper } from "@/components/share/main-wrapper";
 import React from "react";
 
 const ContactPage = () => {
-  return <ContactForm />;
+  return (
+    <MainWrapper>
+      <HeroContact />
+    </MainWrapper>
+  );
 };
 
 export default ContactPage;

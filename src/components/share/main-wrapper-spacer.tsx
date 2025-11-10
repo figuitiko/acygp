@@ -6,7 +6,7 @@ export const MainWrapperSpacer = ({
   children: React.ReactNode;
 }) => {
   return (
-    <main className="flex flex-col max-w-[1280px] mx-auto my-12 gap-16">
+    <main className="flex flex-col max-w-[1280px] mx-auto my-12 gap-16 min-h-[calc(100vh-220px)]">
       {children}
     </main>
   );
