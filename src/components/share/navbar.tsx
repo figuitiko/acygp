@@ -4,11 +4,11 @@ import { FacebookIcon } from "./icons/facebook";
 import { InstagramIcon } from "./icons/instagram";
 
 const navbarLinks = [
-  { name: "Nosotros", path: "/nosotros" },
+  { name: "Nosotros", path: "/about" },
   { name: "Servicios", path: "/servicios" },
-  { name: "Clientes", path: "/clientes" },
-  { name: "Cursos", path: "/cursos" },
-  { name: "Contacto", path: "/contacto" },
+  { name: "Clientes", path: "/clients" },
+  { name: "Cursos", path: "/courses" },
+  { name: "Contacto", path: "/contact" },
 ] as const;
 
 export const Navbar = () => {

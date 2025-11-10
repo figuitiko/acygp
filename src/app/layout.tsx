@@ -19,9 +19,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${firaSans.variable} antialiased`}>
         <Header />
-        <main className="flex flex-col min-h-[calc(100vh-220px)]">
-          {children}
-        </main>
+
+        {children}
+
         <Footer />
       </body>
     </html>
