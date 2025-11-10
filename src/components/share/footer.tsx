@@ -14,11 +14,11 @@ export const Footer = () => {
         <IconInfoBox icon={<Phone />}>
           <div className="flex gap-2">
             <a
-              href="tel:+529903363103"
+              href="tel:+529512227059"
               className="hover:underline"
               target="_blank"
             >
-              +52 (990) 336-3103
+              +52 (951) 222-7059
             </a>
           </div>
         </IconInfoBox>
