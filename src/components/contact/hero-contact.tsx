@@ -24,12 +24,12 @@ export const HeroContact = () => {
             <div className="flex gap-4 items-center">
               <PhoneIcon />
               <div className="flex gap-2">
-                <a href="tel:+529903363103" className="hover:underline">
-                  990 336 3103
+                <a href="tel:+529512227059" className="hover:underline">
+                  951 222 7059
                 </a>
                 /
-                <a href="tel:+5224612315233" className="hover:underline">
-                  24612315233
+                <a href="tel:+522464668120" className="hover:underline">
+                  246 466 8120
                 </a>
               </div>
             </div>
