@@ -15,9 +15,9 @@ export const HeroCourses = ({
   descriptionInfo,
 }: HeroCoursesProps) => {
   return (
-    <section className="flex flex-col items-center justify-center">
+    <section className="flex flex-col items-center justify-center px-8">
       <h1 className="text-main text-[64px] font-bold">{heading}</h1>
-      <div className="flex items-center justify-center gap-16 mt-8">
+      <div className="flex flex-col md:flex-row items-center justify-center gap-16 mt-8">
         <div className="flex flex-col gap-4 max-w-[519px]">
           <h2 className="font-bold text-[36px]">{headingInfo}</h2>
           <h4 className="font-bold text-[24px]">{subHeadingInfo}</h4>

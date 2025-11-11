@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { FacebookIcon } from "./icons/facebook";
 import { InstagramIcon } from "./icons/instagram";
+import Link from "next/link";
 
 const navbarLinks = [
   { name: "Nosotros", path: "/about" },
@@ -20,30 +21,14 @@ export const Navbar = () => {
         <ul className="hidden md:flex gap-6 m-0 p-0 list-none">
           {navbarLinks.map((link) => (
             <li key={link.path}>
-              <a
+              <Link
                 href={link.path}
                 className="text-white font-semibold text-xl hover:text-slate-400 transition-colors"
               >
                 {link.name}
-              </a>
+              </Link>
             </li>
           ))}
-          <li className="flex items-center gap-4 ml-6">
-            <a
-              href="/contacto"
-              className="text-white font-semibold text-xl hover:text-slate-400 transition-colors"
-            >
-              <FacebookIcon />
-            </a>
-          </li>
-          <li className="flex items-center gap-4">
-            <a
-              href="/blog"
-              className="text-white font-semibold text-xl hover:text-slate-400 transition-colors"
-            >
-              <InstagramIcon />
-            </a>
-          </li>
         </ul>
         <button
           className="md:hidden flex flex-col gap-1.5 bg-transparent border-0 cursor-pointer"
@@ -80,13 +65,13 @@ export const Navbar = () => {
         <ul className="flex flex-col gap-4 px-4 py-4">
           {navbarLinks.map((link) => (
             <li key={link.path}>
-              <a
+              <Link
                 href={link.path}
-                className="text-white font-semibold text-xl hover:text-slate-400 transition-colors"
+                className="text-white font-semibold text-xl z-50 hover:text-slate-400 transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {link.name}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
@@ -94,7 +79,7 @@ export const Navbar = () => {
       {/* Overlay for mobile menu */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-30 z-50 md:hidden"
+          className="fixed inset-0 bg-black bg-opacity-30 z-40 md:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
