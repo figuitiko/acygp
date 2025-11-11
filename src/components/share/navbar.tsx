@@ -29,6 +29,22 @@ export const Navbar = () => {
               </Link>
             </li>
           ))}
+          <li className="flex items-center gap-4 ml-6">
+            <a
+              href="/contacto"
+              className="text-white font-semibold text-xl hover:text-slate-400 transition-colors"
+            >
+              <FacebookIcon />
+            </a>
+          </li>
+          <li className="flex items-center gap-4">
+            <a
+              href="/blog"
+              className="text-white font-semibold text-xl hover:text-slate-400 transition-colors"
+            >
+              <InstagramIcon />
+            </a>
+          </li>
         </ul>
         <button
           className="md:hidden flex flex-col gap-1.5 bg-transparent border-0 cursor-pointer"
