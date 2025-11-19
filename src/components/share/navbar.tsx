@@ -6,7 +6,7 @@ import Link from "next/link";
 
 const navbarLinks = [
   { name: "Nosotros", path: "/about" },
-  // { name: "Servicios", path: "/servicios" },
+  { name: "Servicios", path: "/services" },
   { name: "Clientes", path: "/clients" },
   { name: "Cursos", path: "/courses" },
   { name: "Contacto", path: "/contact" },
