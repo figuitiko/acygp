@@ -4,6 +4,7 @@ import "./globals.css";
 import { firaSans } from "@/ui/fonts";
 import { Header } from "@/components/share/header";
 import { Footer } from "@/components/share/footer";
+import { PageTransition } from "@/components/share/page-transition";
 
 export const metadata: Metadata = {
   title: "Acygp consultoria",
@@ -20,7 +21,7 @@ export default function RootLayout({
       <body className={`${firaSans.variable} antialiased`}>
         <Header />
 
-        {children}
+        <PageTransition>{children}</PageTransition>
 
         <Footer />
       </body>
