@@ -7,17 +7,15 @@ export const HeroSection = () => {
       <div className="flex flex-col gap-2 justify-center items-start w-full px-8  max-w-full md:max-w-[60%] p-20 text-white ">
         <h3 className="uppercase text-lg font-semibold">CONÓCENOS</h3>
         <h1 className="text-5xl font-bold leading-[60px]">
-          Consultoría Integral en Gestión Laboral y Ambiental
+          Somos una Entidad Certificadora acreditada por el CONOCER
         </h1>
         <p className="text-lg font-light leading-6">
-          Ofrecemos una consultoría profesional y comprometida con la
-          implementación integral de las obligaciones laborales en las empresas.
-          A través de desarrollo normativo, asesoría, capacitación y alianzas
-          estratégicas. ¡Conozca nuestros servicios y permítanos ayudar a su
-          empresa a crecer de manera responsable y sostenible!
+          Nos especializamos en consultoría empresarial, capacitación,
+          evaluación y certificación de competencias laborales con validez
+          oficial, a nivel Nacional e Internacional y desarrollo de software
         </p>
         <Button
-          href={"/contacto"}
+          href={"/contact"}
           className="mt-4"
           variant={VariantButton.secondary}
         >

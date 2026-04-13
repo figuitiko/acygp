@@ -44,26 +44,29 @@ export const AboutSection = () => {
             imgSrc="/images/capacitacion.jpg"
             imgAlt="capacitacion"
             title="Capacitación"
-            subtitle="La capacitación puede ser virtual o presencial en las instalaciones de la empresa o dependencia"
+            subtitle="Formación presencial y a Distancia"
             description={
-              <p className="text-slate-400">
-                o bien donde la misma determine dependiendo de sus necesidades.
-                El horario y fechas de acuerda con el líder del proyecto y
-                el facilitador. Contamos con el registro como Agentes
-                Capacitadores Externos para entregar las Constancias de
-                Habilidades Laborales (DC3)
-              </p>
+              <ul className="list-disc pl-5 text-left text-slate-400">
+                <li>
+                  Cursos, talleres, diplomados, seminarios, con enfoque
+                  intercultural y perspectiva de género
+                </li>
+                <li>Formación a través de Realidad Virtual</li>
+                <li>Coaching y Mentoring Ejecutivo</li>
+                <li>
+                  Consultoría en Desarrollo organizacional y NOMs de la STPS.
+                </li>
+              </ul>
             }
           />
           <AboutBox
             imgSrc="/images/asesoria.png"
             imgAlt="asesoria"
-            title="Alianza estratégica para Protección al Medio Ambiente"
+            title="Certifica tus habilidades y obtén un reconocimiento oficial en México"
             description={
               <ul className="list-disc pl-5 text-left text-slate-400">
-                <li>Normatividad de Protección al Medio Ambiente.</li>
-                <li>Normatividad y permisos ante CONAGUA.</li>
-                <li>Asesoría y cumplimiento PROFEPA.</li>
+                <li>Centros evaluadores</li>
+                <li>Evaluadores independientes</li>
               </ul>
             }
           />
