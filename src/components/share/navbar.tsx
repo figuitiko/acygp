@@ -31,16 +31,18 @@ export const Navbar = () => {
           ))}
           <li className="flex items-center gap-4 ml-6">
             <a
-              href="/contacto"
+              href="https://www.facebook.com/share/1CuPrHJ7Fy/?mibextid=wwXIfr"
               className="text-white font-semibold text-xl hover:text-slate-400 transition-colors"
+              target="_blank"
             >
               <FacebookIcon />
             </a>
           </li>
           <li className="flex items-center gap-4">
             <a
-              href="/blog"
+              href="https://www.instagram.com/acygpec?igsh=OW16MnJmYTh3aWIx"
               className="text-white font-semibold text-xl hover:text-slate-400 transition-colors"
+              target="_blank"
             >
               <InstagramIcon />
             </a>
