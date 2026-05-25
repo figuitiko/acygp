@@ -2,27 +2,63 @@ import { WorkerBoxProps } from "../../components/about/worker-box";
 
 export const workersData: WorkerBoxProps[] = [
   {
-    workerName: "Juan Pérez",
-    workerImgSrc: "/images/about/placeholder.webp",
-    workerRole: "Consultor Senior",
-    workerDescription:
-      "Especialista en normativas laborales con más de 10 años de experiencia.",
+    workerName: "Dra. Bibián Eunice Ordáz Llánes",
+    workerImgSrc: "/images/team/bibi.jpeg",
+    workerRole: "Directora General",
+    workerDescription: "",
   },
   {
-    workerName: "María Gómez",
+    workerName: "Mtra. Sandra Hernández Pinelo",
     workerImgSrc: "/images/about/placeholder.webp",
-    workerRole: "Asesora Legal",
-    workerDescription:
-      "Experta en asesoría legal para empresas en cumplimiento laboral.",
+    workerRole: "Directora de Operaciones",
+    workerDescription: "",
   },
   {
-    workerName: "Carlos Rodríguez",
+    workerName: "Mtro. Benigno Adalberto Robles Moreno",
+    workerImgSrc: "/images/team/beni.jpeg",
+    workerRole: "Director Jurídico",
+    workerDescription: "",
+  },
+  {
+    workerName: "Mtro. Roberto Guzmán Díaz",
     workerImgSrc: "/images/about/placeholder.webp",
-    workerRole: "Capacitador",
-    workerDescription:
-      "Encargado de desarrollar programas de capacitación integral.",
+    workerRole: "Director de Vinculación",
+    workerDescription: "",
+  },
+  {
+    workerName: "C.P. Fabiola González Castellanos",
+    workerImgSrc: "/images/team/fabi.jpeg",
+    workerRole: "Director de Vinculación",
+    workerDescription: "",
+  },
+  {
+    workerName: "Mtra. Martha Elena Durán González",
+    workerImgSrc: "/images/team/martha.jpeg",
+    workerRole: "Director de Vinculación",
+    workerDescription: "",
+  },
+  {
+    workerName: "Ing. Frank Renato Freeman López",
+    workerImgSrc: "/images/about/placeholder.webp",
+    workerRole: "Director de TIC",
+    workerDescription: "",
   },
 ];
+
+// Mtro. Benigno Adalberto Robles Moreno
+// Director Jurídico
+
+// Mtro. Roberto Guzmán Díaz
+// Director de Vinculación
+
+// C.P. Fabiola González Castellanos
+// Directora Administrativa
+
+// Mtra. Martha Elena Durán González
+// Directora de Capacitación
+
+// Ing. Frank Renato Freeman López
+// Director de TIC
 
 export const SECTION_INFO_1 = {
   heading: "Beneficios de la Certificación",
