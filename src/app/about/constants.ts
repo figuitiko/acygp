@@ -84,8 +84,11 @@ export const SECTION_INFO_2 = {
   CTA: {
     headingCTA: "DESCARGA EL FORMULARIO DE REGISTRO",
     itemsCTA: [
-      { title: "Sales Inquiries", email: "email@sample.com" },
-      { title: "Customer Support", email: "email@sample.com" },
+      { title: "Ejecutivo de Ventas", email: "acygp2025@gmial.com" },
+      {
+        title: "Atención a Clientes",
+        email: "entidadcertificadoracygp@gmail.com",
+      },
     ],
   },
 };
