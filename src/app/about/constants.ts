@@ -84,7 +84,7 @@ export const SECTION_INFO_2 = {
   CTA: {
     headingCTA: "DESCARGA EL FORMULARIO DE REGISTRO",
     itemsCTA: [
-      { title: "Ejecutivo de Ventas", email: "acygp2025@gmial.com" },
+      { title: "Ejecutivo de Ventas", email: "acygp2025@gmail.com" },
       {
         title: "Atención a Clientes",
         email: "entidadcertificadoracygp@gmail.com",
