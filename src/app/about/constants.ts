@@ -9,7 +9,7 @@ export const workersData: WorkerBoxProps[] = [
   },
   {
     workerName: "Mtra. Sandra Hernández Pinelo",
-    workerImgSrc: "/images/about/placeholder.webp",
+    workerImgSrc: "/images/team/sandra.jpeg",
     workerRole: "Directora de Operaciones",
     workerDescription: "",
   },
@@ -39,7 +39,7 @@ export const workersData: WorkerBoxProps[] = [
   },
   {
     workerName: "Ing. Frank Renato Freeman López",
-    workerImgSrc: "/images/about/placeholder.webp",
+    workerImgSrc: "/images/team/frank.png",
     workerRole: "Director de TIC",
     workerDescription: "",
   },
