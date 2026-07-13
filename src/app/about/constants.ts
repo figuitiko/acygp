@@ -21,20 +21,20 @@ export const workersData: WorkerBoxProps[] = [
   },
   {
     workerName: "Mtro. Roberto Guzmán Díaz",
-    workerImgSrc: "/images/about/placeholder.webp",
-    workerRole: "Director de Vinculación",
+    workerImgSrc: "/images/team/robert.jpeg",
+    workerRole: "Director de Vinculación y Gestión",
     workerDescription: "",
   },
   {
     workerName: "C.P. Fabiola González Castellanos",
     workerImgSrc: "/images/team/fabi.jpeg",
-    workerRole: "Director de Vinculación",
+    workerRole: "Directora de Administación",
     workerDescription: "",
   },
   {
     workerName: "Mtra. Martha Elena Durán González",
     workerImgSrc: "/images/team/martha.jpeg",
-    workerRole: "Director de Vinculación",
+    workerRole: "Directora de Proyectos",
     workerDescription: "",
   },
   {
