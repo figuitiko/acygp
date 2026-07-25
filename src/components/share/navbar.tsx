@@ -9,6 +9,7 @@ const navbarLinks = [
   { name: "Servicios", path: "/services" },
   { name: "Clientes", path: "/clients" },
   { name: "Cursos", path: "/courses" },
+  { name: "Validar", path: "/validar" },
   { name: "Contacto", path: "/contact" },
 ] as const;
 
