@@ -11,7 +11,12 @@ import {
   isValidAdminPassword,
   setAdminSessionCookie,
 } from "./admin-auth";
-import { createConstancia, revokeConstancia } from "./repository";
+import {
+  createConstancia,
+  reactivateConstancia,
+  revokeConstancia,
+  updateConstancia,
+} from "./repository";
 import { getSiteUrl } from "./site-url";
 
 const createConstanciaSchema = z.object({
@@ -65,6 +70,37 @@ export async function createConstanciaFromForm(formData: FormData) {
   redirect(`/admin/constancias?created=${encodeURIComponent(constancia.folio)}`);
 }
 
+export async function updateConstanciaFromForm(formData: FormData) {
+  if (!(await isAdminAuthenticated())) {
+    redirect("/admin/constancias?auth=required");
+  }
+
+  const id = String(formData.get("id") ?? "");
+  const folio = String(formData.get("folio") ?? "");
+  const result = createConstanciaSchema.safeParse({
+    recipientName: formData.get("recipientName"),
+    courseName: formData.get("courseName"),
+    standardCode: formData.get("standardCode"),
+    issuedAt: formData.get("issuedAt"),
+  });
+
+  if (!id || !folio || !result.success) {
+    redirect(`/admin/constancias/${encodeURIComponent(folio || "missing")}/editar?error=invalid-data`);
+  }
+
+  await updateConstancia({
+    id,
+    recipientName: result.data.recipientName,
+    courseName: result.data.courseName,
+    standardCode: result.data.standardCode || null,
+    issuedAt: parseDateOnly(result.data.issuedAt),
+  });
+
+  revalidatePath("/admin/constancias");
+  revalidatePath(`/validar/${encodeURIComponent(folio)}`);
+  redirect(`/admin/constancias?updated=${encodeURIComponent(folio)}`);
+}
+
 export async function revokeConstanciaFromForm(formData: FormData) {
   if (!(await isAdminAuthenticated())) {
     redirect("/admin/constancias?auth=required");
@@ -78,6 +114,21 @@ export async function revokeConstanciaFromForm(formData: FormData) {
 
   revalidatePath("/admin/constancias");
   redirect("/admin/constancias?revoked=1");
+}
+
+export async function reactivateConstanciaFromForm(formData: FormData) {
+  if (!(await isAdminAuthenticated())) {
+    redirect("/admin/constancias?auth=required");
+  }
+
+  const id = String(formData.get("id") ?? "");
+
+  if (id) {
+    await reactivateConstancia(id);
+  }
+
+  revalidatePath("/admin/constancias");
+  redirect("/admin/constancias?reactivated=1");
 }
 
 export async function createQrCodeDataUrl(validationUrl: string) {

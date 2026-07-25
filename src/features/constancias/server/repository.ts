@@ -1,4 +1,5 @@
 import { ConstanciaStatus } from "@/generated/prisma/enums";
+import type { ConstanciaWhereInput } from "@/generated/prisma/models/Constancia";
 
 import {
   buildConstanciaValidationUrl,
@@ -6,15 +7,26 @@ import {
   createConstanciaPayload,
   formatConstanciaFolio,
 } from "../domain/constancia";
+import { createPagination } from "../domain/pagination";
+import { normalizeConstanciasSearchTerm } from "../domain/search";
 import { prisma } from "./db";
 
-export type CreateConstanciaInput = {
+export type ConstanciaFormInput = {
   recipientName: string;
   courseName: string;
   standardCode?: string | null;
   issuedAt: Date;
+};
+
+export type CreateConstanciaInput = ConstanciaFormInput & {
   siteUrl: string;
 };
+
+export type UpdateConstanciaInput = ConstanciaFormInput & {
+  id: string;
+};
+
+const CONSTANCIAS_PAGE_SIZE = 10;
 
 export async function createConstancia(input: CreateConstanciaInput) {
   const year = input.issuedAt.getUTCFullYear();
@@ -46,17 +58,96 @@ export async function getConstanciaByFolio(folio: string) {
   return prisma.constancia.findUnique({ where: { folio } });
 }
 
-export async function listConstancias() {
-  return prisma.constancia.findMany({
+export async function listConstanciasPage({
+  page,
+  search,
+}: {
+  page?: string | number | null;
+  search?: string | null;
+} = {}) {
+  const where = createConstanciasSearchWhere(search);
+  const totalItems = await prisma.constancia.count({ where });
+  const pagination = createPagination({
+    page,
+    pageSize: CONSTANCIAS_PAGE_SIZE,
+    totalItems,
+  });
+
+  const items = await prisma.constancia.findMany({
+    where,
     orderBy: [{ issuedAt: "desc" }, { createdAt: "desc" }],
-    take: 50,
+    skip: pagination.offset,
+    take: pagination.pageSize,
+  });
+
+  return {
+    items,
+    pagination,
+  };
+}
+
+export async function listConstancias() {
+  return listConstanciasPage().then((result) => result.items);
+}
+
+function createConstanciasSearchWhere(search?: string | null): ConstanciaWhereInput | undefined {
+  const normalizedSearch = normalizeConstanciasSearchTerm(search);
+
+  if (!normalizedSearch) {
+    return undefined;
+  }
+
+  return {
+    OR: [
+      { folio: { contains: normalizedSearch, mode: "insensitive" } },
+      { recipientName: { contains: normalizedSearch, mode: "insensitive" } },
+      { courseName: { contains: normalizedSearch, mode: "insensitive" } },
+      { standardCode: { contains: normalizedSearch, mode: "insensitive" } },
+    ],
+  };
+}
+
+export async function updateConstancia(input: UpdateConstanciaInput) {
+  const current = await prisma.constancia.findUniqueOrThrow({
+    where: { id: input.id },
+    select: { folio: true },
+  });
+  const payload = createConstanciaPayload({
+    folio: current.folio,
+    recipientName: input.recipientName,
+    courseName: input.courseName,
+    standardCode: input.standardCode,
+    issuedAt: input.issuedAt,
+  });
+  const validationHash = createConstanciaHash({
+    payload,
+    secret: getValidationSecret(),
+  });
+
+  return prisma.constancia.update({
+    where: { id: input.id },
+    data: {
+      validationHash,
+      recipientName: payload.recipientName,
+      courseName: payload.courseName,
+      standardCode: payload.standardCode,
+      issuedAt: input.issuedAt,
+    },
   });
 }
 
 export async function revokeConstancia(id: string) {
+  return updateConstanciaStatus(id, ConstanciaStatus.REVOKED);
+}
+
+export async function reactivateConstancia(id: string) {
+  return updateConstanciaStatus(id, ConstanciaStatus.VALID);
+}
+
+function updateConstanciaStatus(id: string, status: ConstanciaStatus) {
   return prisma.constancia.update({
     where: { id },
-    data: { status: ConstanciaStatus.REVOKED },
+    data: { status },
   });
 }
 
