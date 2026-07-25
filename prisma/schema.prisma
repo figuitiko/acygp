@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ConstanciaStatus {
+  VALID
+  REVOKED
+}
+
+model Constancia {
+  id             String           @id @default(cuid())
+  folio          String           @unique
+  validationHash String           @unique
+  recipientName  String
+  courseName     String
+  standardCode   String?
+  issuedAt       DateTime
+  status         ConstanciaStatus @default(VALID)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@index([status])
+  @@index([issuedAt])
+}
