@@ -88,6 +88,14 @@ export async function createQrCodeDataUrl(validationUrl: string) {
   });
 }
 
+export async function createLargeQrCodeDataUrl(validationUrl: string) {
+  return QRCode.toDataURL(validationUrl, {
+    errorCorrectionLevel: "M",
+    margin: 2,
+    width: 640,
+  });
+}
+
 function parseDateOnly(value: string) {
   return new Date(`${value}T00:00:00.000Z`);
 }

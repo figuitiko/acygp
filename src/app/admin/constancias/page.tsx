@@ -9,9 +9,12 @@ import {
   revokeConstanciaFromForm,
 } from "@/features/constancias/server/actions";
 import { isAdminAuthenticated } from "@/features/constancias/server/admin-auth";
-import { listConstancias } from "@/features/constancias/server/repository";
+import { getConstanciaByFolio, listConstancias } from "@/features/constancias/server/repository";
 import { getSiteUrl } from "@/features/constancias/server/site-url";
-import { buildConstanciaValidationUrl } from "@/features/constancias/domain/constancia";
+import {
+  buildConstanciaValidationUrl,
+  normalizeConstanciaFolioInput,
+} from "@/features/constancias/domain/constancia";
 
 export const metadata = {
   title: "Admin constancias | ACyGP",
@@ -23,6 +26,7 @@ type AdminConstanciasPageProps = {
     created?: string;
     error?: string;
     revoked?: string;
+    validateFolio?: string;
   }>;
 };
 
@@ -36,7 +40,14 @@ export default async function AdminConstanciasPage({ searchParams }: AdminConsta
     return <LoginPanel authState={query.auth} />;
   }
 
-  const [constancias, siteUrl] = await Promise.all([listConstancias(), getSiteUrl()]);
+  const normalizedLookupFolio = query.validateFolio
+    ? normalizeConstanciaFolioInput(query.validateFolio)
+    : null;
+  const [constancias, siteUrl, lookupConstancia] = await Promise.all([
+    listConstancias(),
+    getSiteUrl(),
+    normalizedLookupFolio ? getConstanciaByFolio(normalizedLookupFolio) : Promise.resolve(null),
+  ]);
   const constanciasWithQr = await Promise.all(
     constancias.map(async (constancia) => {
       const validationUrl = buildConstanciaValidationUrl({
@@ -71,6 +82,12 @@ export default async function AdminConstanciasPage({ searchParams }: AdminConsta
         </div>
 
         <StatusMessage query={query} />
+
+        <AdminValidationLookup
+          lookupFolio={normalizedLookupFolio}
+          constancia={lookupConstancia}
+          siteUrl={siteUrl}
+        />
 
         <section className="grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.4fr)]">
           <CreateConstanciaForm />
@@ -142,6 +159,77 @@ function StatusMessage({ query }: { query: Awaited<AdminConstanciasPageProps["se
   return null;
 }
 
+
+function AdminValidationLookup({
+  lookupFolio,
+  constancia,
+  siteUrl,
+}: {
+  lookupFolio: string | null;
+  constancia: Awaited<ReturnType<typeof getConstanciaByFolio>>;
+  siteUrl: string;
+}) {
+  const validationUrl = lookupFolio
+    ? buildConstanciaValidationUrl({ baseUrl: siteUrl, folio: lookupFolio })
+    : null;
+
+  return (
+    <section className="rounded-2xl bg-white p-6 shadow-md">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-start">
+        <div>
+          <h2 className="text-2xl font-bold text-main">Validar por folio</h2>
+          <p className="mt-2 text-sm text-slate-600">
+            Ingresá cualquier folio ACyGP para consultar si existe, si está vigente o si fue revocado.
+          </p>
+          <form method="get" action="/admin/constancias" className="mt-5 flex flex-col gap-3 sm:flex-row">
+            <input
+              name="validateFolio"
+              placeholder="ACyGP-2026-000001"
+              defaultValue={lookupFolio ?? ""}
+              className="min-w-0 flex-1 rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-main focus:ring-2 focus:ring-main/20"
+            />
+            <button className="rounded-lg bg-main px-5 py-3 font-bold text-white transition hover:bg-blue-800">
+              Validar
+            </button>
+          </form>
+        </div>
+
+        {lookupFolio && (
+          <div className={`rounded-xl border p-5 ${constancia ? constancia.status === "VALID" ? "border-emerald-200 bg-emerald-50" : "border-red-200 bg-red-50" : "border-amber-200 bg-amber-50"}`}>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Resultado</p>
+            {constancia ? (
+              <div className="mt-3">
+                <div className="flex flex-wrap items-center gap-3">
+                  <h3 className="text-xl font-bold text-slate-900">{constancia.folio}</h3>
+                  <span className={`rounded-full px-3 py-1 text-xs font-bold ${constancia.status === "VALID" ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"}`}>
+                    {constancia.status === "VALID" ? "Válida" : "Revocada"}
+                  </span>
+                </div>
+                <p className="mt-2 font-semibold text-slate-800">{constancia.recipientName}</p>
+                <p className="text-slate-600">{constancia.courseName}</p>
+                <div className="mt-4 flex flex-wrap gap-4">
+                  {validationUrl && (
+                    <Link href={validationUrl} className="font-bold text-main hover:underline">
+                      Abrir validación pública
+                    </Link>
+                  )}
+                  <Link href={`/admin/constancias/${encodeURIComponent(constancia.folio)}/qr`} className="font-bold text-main hover:underline">
+                    Ver QR grande
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <p className="mt-3 font-semibold text-amber-800">
+                No existe una constancia con el folio {lookupFolio}.
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
 function CreateConstanciaForm() {
   return (
     <section className="rounded-2xl bg-white p-6 shadow-md">
@@ -203,9 +291,14 @@ function ConstanciaList({ constancias }: { constancias: ConstanciaListItem[] }) 
                 {constancia.standardCode && <p className="text-sm text-slate-500">Estándar: {constancia.standardCode}</p>}
                 <p className="mt-2 text-sm text-slate-500">Emitida: {formatDate(constancia.issuedAt)}</p>
                 <p className="mt-2 break-all text-xs text-slate-500">Hash: {constancia.validationHash}</p>
-                <Link href={constancia.validationUrl} className="mt-3 inline-flex font-bold text-main hover:underline">
-                  Abrir validación pública
-                </Link>
+                <div className="mt-3 flex flex-wrap gap-4">
+                  <Link href={constancia.validationUrl} className="inline-flex font-bold text-main hover:underline">
+                    Abrir validación pública
+                  </Link>
+                  <Link href={`/admin/constancias/${encodeURIComponent(constancia.folio)}/qr`} className="inline-flex font-bold text-main hover:underline">
+                    Ver QR grande
+                  </Link>
+                </div>
                 {constancia.status === "VALID" && (
                   <form action={revokeConstanciaFromForm} className="mt-4">
                     <input type="hidden" name="id" value={constancia.id} />

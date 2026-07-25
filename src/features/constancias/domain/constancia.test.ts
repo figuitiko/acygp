@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  buildConstanciaValidationPath,
   buildConstanciaValidationUrl,
   createConstanciaHash,
   createConstanciaPayload,
   formatConstanciaFolio,
+  normalizeConstanciaFolioInput,
 } from "./constancia";
 
 describe("constancia domain", () => {
@@ -49,6 +51,17 @@ describe("constancia domain", () => {
     expect(first).toMatch(/^[a-f0-9]{64}$/);
     expect(second).toBe(first);
     expect(changed).not.toBe(first);
+  });
+
+
+  it("normalizes folio input for admin validation lookup", () => {
+    expect(normalizeConstanciaFolioInput("  acygp-2026-000123  ")).toBe("ACyGP-2026-000123");
+    expect(normalizeConstanciaFolioInput(" ACYGP-2026-000123 ")).toBe("ACyGP-2026-000123");
+  });
+
+
+  it("builds public validation paths from normalized folio input", () => {
+    expect(buildConstanciaValidationPath(" acygp-2026-000123 ")).toBe("/validar/ACyGP-2026-000123");
   });
 
   it("builds public validation URLs from the folio", () => {

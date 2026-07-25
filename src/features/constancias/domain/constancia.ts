@@ -54,6 +54,23 @@ export function createConstanciaHash({
   return createHmac("sha256", secret).update(canonical).digest("hex");
 }
 
+
+export function normalizeConstanciaFolioInput(folio: string) {
+  const normalized = folio.trim().toUpperCase();
+  const match = normalized.match(/^ACYGP-(\d{4})-(\d{6})$/);
+
+  if (!match) {
+    return normalized;
+  }
+
+  return `ACyGP-${match[1]}-${match[2]}`;
+}
+
+
+export function buildConstanciaValidationPath(folio: string) {
+  return `/validar/${encodeURIComponent(normalizeConstanciaFolioInput(folio))}`;
+}
+
 export function buildConstanciaValidationUrl({
   baseUrl,
   folio,
@@ -61,7 +78,7 @@ export function buildConstanciaValidationUrl({
   baseUrl: string;
   folio: string;
 }) {
-  const url = new URL(`/validar/${encodeURIComponent(folio)}`, normalizeBaseUrl(baseUrl));
+  const url = new URL(buildConstanciaValidationPath(folio), normalizeBaseUrl(baseUrl));
   return url.toString();
 }
 
