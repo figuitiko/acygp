@@ -51,7 +51,11 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  Constancia: 'Constancia'
+  Constancia: 'Constancia',
+  EvaluationForm: 'EvaluationForm',
+  EvaluationQuestion: 'EvaluationQuestion',
+  EvaluationSubmission: 'EvaluationSubmission',
+  EvaluationAnswer: 'EvaluationAnswer'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -84,6 +88,75 @@ export const ConstanciaScalarFieldEnum = {
 } as const
 
 export type ConstanciaScalarFieldEnum = (typeof ConstanciaScalarFieldEnum)[keyof typeof ConstanciaScalarFieldEnum]
+
+
+export const EvaluationFormScalarFieldEnum = {
+  id: 'id',
+  googleFormId: 'googleFormId',
+  googleFormTitle: 'googleFormTitle',
+  status: 'status',
+  evaluationName: 'evaluationName',
+  participantNameQuestionId: 'participantNameQuestionId',
+  participantEmailQuestionId: 'participantEmailQuestionId',
+  useRespondentEmail: 'useRespondentEmail',
+  passingThreshold: 'passingThreshold',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EvaluationFormScalarFieldEnum = (typeof EvaluationFormScalarFieldEnum)[keyof typeof EvaluationFormScalarFieldEnum]
+
+
+export const EvaluationQuestionScalarFieldEnum = {
+  id: 'id',
+  formId: 'formId',
+  googleItemId: 'googleItemId',
+  title: 'title',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EvaluationQuestionScalarFieldEnum = (typeof EvaluationQuestionScalarFieldEnum)[keyof typeof EvaluationQuestionScalarFieldEnum]
+
+
+export const EvaluationSubmissionScalarFieldEnum = {
+  id: 'id',
+  formId: 'formId',
+  googleResponseId: 'googleResponseId',
+  submittedAt: 'submittedAt',
+  respondentEmail: 'respondentEmail',
+  participantName: 'participantName',
+  participantEmail: 'participantEmail',
+  importedScore: 'importedScore',
+  importedMaxScore: 'importedMaxScore',
+  finalScore: 'finalScore',
+  finalMaxScore: 'finalMaxScore',
+  scoreSource: 'scoreSource',
+  workflowStatus: 'workflowStatus',
+  outcome: 'outcome',
+  thresholdSnapshot: 'thresholdSnapshot',
+  reviewerNotes: 'reviewerNotes',
+  reviewedAt: 'reviewedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EvaluationSubmissionScalarFieldEnum = (typeof EvaluationSubmissionScalarFieldEnum)[keyof typeof EvaluationSubmissionScalarFieldEnum]
+
+
+export const EvaluationAnswerScalarFieldEnum = {
+  id: 'id',
+  submissionId: 'submissionId',
+  questionId: 'questionId',
+  googleItemId: 'googleItemId',
+  questionTitleSnapshot: 'questionTitleSnapshot',
+  answer: 'answer',
+  score: 'score',
+  maxScore: 'maxScore',
+  createdAt: 'createdAt'
+} as const
+
+export type EvaluationAnswerScalarFieldEnum = (typeof EvaluationAnswerScalarFieldEnum)[keyof typeof EvaluationAnswerScalarFieldEnum]
 
 
 export const SortOrder = {

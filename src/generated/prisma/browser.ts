@@ -22,3 +22,23 @@ export * from './enums';
  * 
  */
 export type Constancia = Prisma.ConstanciaModel
+/**
+ * Model EvaluationForm
+ * 
+ */
+export type EvaluationForm = Prisma.EvaluationFormModel
+/**
+ * Model EvaluationQuestion
+ * 
+ */
+export type EvaluationQuestion = Prisma.EvaluationQuestionModel
+/**
+ * Model EvaluationSubmission
+ * 
+ */
+export type EvaluationSubmission = Prisma.EvaluationSubmissionModel
+/**
+ * Model EvaluationAnswer
+ * 
+ */
+export type EvaluationAnswer = Prisma.EvaluationAnswerModel
