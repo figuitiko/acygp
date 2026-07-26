@@ -9,4 +9,8 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/Constancia'
+export type * from './models/EvaluationForm'
+export type * from './models/EvaluationQuestion'
+export type * from './models/EvaluationSubmission'
+export type * from './models/EvaluationAnswer'
 export type * from './commonInputTypes'

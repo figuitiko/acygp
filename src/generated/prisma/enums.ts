@@ -15,3 +15,36 @@ export const ConstanciaStatus = {
 } as const
 
 export type ConstanciaStatus = (typeof ConstanciaStatus)[keyof typeof ConstanciaStatus]
+
+
+export const EvaluationFormStatus = {
+  UNMAPPED: 'UNMAPPED',
+  ACTIVE: 'ACTIVE'
+} as const
+
+export type EvaluationFormStatus = (typeof EvaluationFormStatus)[keyof typeof EvaluationFormStatus]
+
+
+export const EvaluationSubmissionWorkflow = {
+  AWAITING_MAPPING: 'AWAITING_MAPPING',
+  PENDING_REVIEW: 'PENDING_REVIEW',
+  REVIEWED: 'REVIEWED'
+} as const
+
+export type EvaluationSubmissionWorkflow = (typeof EvaluationSubmissionWorkflow)[keyof typeof EvaluationSubmissionWorkflow]
+
+
+export const EvaluationOutcome = {
+  PASS: 'PASS',
+  FAIL: 'FAIL'
+} as const
+
+export type EvaluationOutcome = (typeof EvaluationOutcome)[keyof typeof EvaluationOutcome]
+
+
+export const EvaluationScoreSource = {
+  GOOGLE: 'GOOGLE',
+  MANUAL: 'MANUAL'
+} as const
+
+export type EvaluationScoreSource = (typeof EvaluationScoreSource)[keyof typeof EvaluationScoreSource]

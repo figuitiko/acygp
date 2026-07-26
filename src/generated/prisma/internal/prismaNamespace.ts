@@ -397,7 +397,11 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
-  Constancia: 'Constancia'
+  Constancia: 'Constancia',
+  EvaluationForm: 'EvaluationForm',
+  EvaluationQuestion: 'EvaluationQuestion',
+  EvaluationSubmission: 'EvaluationSubmission',
+  EvaluationAnswer: 'EvaluationAnswer'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -413,7 +417,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "constancia"
+    modelProps: "constancia" | "evaluationForm" | "evaluationQuestion" | "evaluationSubmission" | "evaluationAnswer"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -491,6 +495,302 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    EvaluationForm: {
+      payload: Prisma.$EvaluationFormPayload<ExtArgs>
+      fields: Prisma.EvaluationFormFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EvaluationFormFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationFormPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EvaluationFormFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationFormPayload>
+        }
+        findFirst: {
+          args: Prisma.EvaluationFormFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationFormPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EvaluationFormFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationFormPayload>
+        }
+        findMany: {
+          args: Prisma.EvaluationFormFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationFormPayload>[]
+        }
+        create: {
+          args: Prisma.EvaluationFormCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationFormPayload>
+        }
+        createMany: {
+          args: Prisma.EvaluationFormCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EvaluationFormCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationFormPayload>[]
+        }
+        delete: {
+          args: Prisma.EvaluationFormDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationFormPayload>
+        }
+        update: {
+          args: Prisma.EvaluationFormUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationFormPayload>
+        }
+        deleteMany: {
+          args: Prisma.EvaluationFormDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EvaluationFormUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EvaluationFormUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationFormPayload>[]
+        }
+        upsert: {
+          args: Prisma.EvaluationFormUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationFormPayload>
+        }
+        aggregate: {
+          args: Prisma.EvaluationFormAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEvaluationForm>
+        }
+        groupBy: {
+          args: Prisma.EvaluationFormGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EvaluationFormGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EvaluationFormCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EvaluationFormCountAggregateOutputType> | number
+        }
+      }
+    }
+    EvaluationQuestion: {
+      payload: Prisma.$EvaluationQuestionPayload<ExtArgs>
+      fields: Prisma.EvaluationQuestionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EvaluationQuestionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationQuestionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EvaluationQuestionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationQuestionPayload>
+        }
+        findFirst: {
+          args: Prisma.EvaluationQuestionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationQuestionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EvaluationQuestionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationQuestionPayload>
+        }
+        findMany: {
+          args: Prisma.EvaluationQuestionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationQuestionPayload>[]
+        }
+        create: {
+          args: Prisma.EvaluationQuestionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationQuestionPayload>
+        }
+        createMany: {
+          args: Prisma.EvaluationQuestionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EvaluationQuestionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationQuestionPayload>[]
+        }
+        delete: {
+          args: Prisma.EvaluationQuestionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationQuestionPayload>
+        }
+        update: {
+          args: Prisma.EvaluationQuestionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationQuestionPayload>
+        }
+        deleteMany: {
+          args: Prisma.EvaluationQuestionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EvaluationQuestionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EvaluationQuestionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationQuestionPayload>[]
+        }
+        upsert: {
+          args: Prisma.EvaluationQuestionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationQuestionPayload>
+        }
+        aggregate: {
+          args: Prisma.EvaluationQuestionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEvaluationQuestion>
+        }
+        groupBy: {
+          args: Prisma.EvaluationQuestionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EvaluationQuestionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EvaluationQuestionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EvaluationQuestionCountAggregateOutputType> | number
+        }
+      }
+    }
+    EvaluationSubmission: {
+      payload: Prisma.$EvaluationSubmissionPayload<ExtArgs>
+      fields: Prisma.EvaluationSubmissionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EvaluationSubmissionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationSubmissionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EvaluationSubmissionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationSubmissionPayload>
+        }
+        findFirst: {
+          args: Prisma.EvaluationSubmissionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationSubmissionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EvaluationSubmissionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationSubmissionPayload>
+        }
+        findMany: {
+          args: Prisma.EvaluationSubmissionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationSubmissionPayload>[]
+        }
+        create: {
+          args: Prisma.EvaluationSubmissionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationSubmissionPayload>
+        }
+        createMany: {
+          args: Prisma.EvaluationSubmissionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EvaluationSubmissionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationSubmissionPayload>[]
+        }
+        delete: {
+          args: Prisma.EvaluationSubmissionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationSubmissionPayload>
+        }
+        update: {
+          args: Prisma.EvaluationSubmissionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationSubmissionPayload>
+        }
+        deleteMany: {
+          args: Prisma.EvaluationSubmissionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EvaluationSubmissionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EvaluationSubmissionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationSubmissionPayload>[]
+        }
+        upsert: {
+          args: Prisma.EvaluationSubmissionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationSubmissionPayload>
+        }
+        aggregate: {
+          args: Prisma.EvaluationSubmissionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEvaluationSubmission>
+        }
+        groupBy: {
+          args: Prisma.EvaluationSubmissionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EvaluationSubmissionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EvaluationSubmissionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EvaluationSubmissionCountAggregateOutputType> | number
+        }
+      }
+    }
+    EvaluationAnswer: {
+      payload: Prisma.$EvaluationAnswerPayload<ExtArgs>
+      fields: Prisma.EvaluationAnswerFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EvaluationAnswerFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationAnswerPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EvaluationAnswerFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationAnswerPayload>
+        }
+        findFirst: {
+          args: Prisma.EvaluationAnswerFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationAnswerPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EvaluationAnswerFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationAnswerPayload>
+        }
+        findMany: {
+          args: Prisma.EvaluationAnswerFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationAnswerPayload>[]
+        }
+        create: {
+          args: Prisma.EvaluationAnswerCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationAnswerPayload>
+        }
+        createMany: {
+          args: Prisma.EvaluationAnswerCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EvaluationAnswerCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationAnswerPayload>[]
+        }
+        delete: {
+          args: Prisma.EvaluationAnswerDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationAnswerPayload>
+        }
+        update: {
+          args: Prisma.EvaluationAnswerUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationAnswerPayload>
+        }
+        deleteMany: {
+          args: Prisma.EvaluationAnswerDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EvaluationAnswerUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EvaluationAnswerUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationAnswerPayload>[]
+        }
+        upsert: {
+          args: Prisma.EvaluationAnswerUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EvaluationAnswerPayload>
+        }
+        aggregate: {
+          args: Prisma.EvaluationAnswerAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEvaluationAnswer>
+        }
+        groupBy: {
+          args: Prisma.EvaluationAnswerGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EvaluationAnswerGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EvaluationAnswerCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EvaluationAnswerCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -544,6 +844,75 @@ export const ConstanciaScalarFieldEnum = {
 } as const
 
 export type ConstanciaScalarFieldEnum = (typeof ConstanciaScalarFieldEnum)[keyof typeof ConstanciaScalarFieldEnum]
+
+
+export const EvaluationFormScalarFieldEnum = {
+  id: 'id',
+  googleFormId: 'googleFormId',
+  googleFormTitle: 'googleFormTitle',
+  status: 'status',
+  evaluationName: 'evaluationName',
+  participantNameQuestionId: 'participantNameQuestionId',
+  participantEmailQuestionId: 'participantEmailQuestionId',
+  useRespondentEmail: 'useRespondentEmail',
+  passingThreshold: 'passingThreshold',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EvaluationFormScalarFieldEnum = (typeof EvaluationFormScalarFieldEnum)[keyof typeof EvaluationFormScalarFieldEnum]
+
+
+export const EvaluationQuestionScalarFieldEnum = {
+  id: 'id',
+  formId: 'formId',
+  googleItemId: 'googleItemId',
+  title: 'title',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EvaluationQuestionScalarFieldEnum = (typeof EvaluationQuestionScalarFieldEnum)[keyof typeof EvaluationQuestionScalarFieldEnum]
+
+
+export const EvaluationSubmissionScalarFieldEnum = {
+  id: 'id',
+  formId: 'formId',
+  googleResponseId: 'googleResponseId',
+  submittedAt: 'submittedAt',
+  respondentEmail: 'respondentEmail',
+  participantName: 'participantName',
+  participantEmail: 'participantEmail',
+  importedScore: 'importedScore',
+  importedMaxScore: 'importedMaxScore',
+  finalScore: 'finalScore',
+  finalMaxScore: 'finalMaxScore',
+  scoreSource: 'scoreSource',
+  workflowStatus: 'workflowStatus',
+  outcome: 'outcome',
+  thresholdSnapshot: 'thresholdSnapshot',
+  reviewerNotes: 'reviewerNotes',
+  reviewedAt: 'reviewedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EvaluationSubmissionScalarFieldEnum = (typeof EvaluationSubmissionScalarFieldEnum)[keyof typeof EvaluationSubmissionScalarFieldEnum]
+
+
+export const EvaluationAnswerScalarFieldEnum = {
+  id: 'id',
+  submissionId: 'submissionId',
+  questionId: 'questionId',
+  googleItemId: 'googleItemId',
+  questionTitleSnapshot: 'questionTitleSnapshot',
+  answer: 'answer',
+  score: 'score',
+  maxScore: 'maxScore',
+  createdAt: 'createdAt'
+} as const
+
+export type EvaluationAnswerScalarFieldEnum = (typeof EvaluationAnswerScalarFieldEnum)[keyof typeof EvaluationAnswerScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -615,6 +984,83 @@ export type EnumConstanciaStatusFieldRefInput<$PrismaModel> = FieldRefInputType<
  * Reference to a field of type 'ConstanciaStatus[]'
  */
 export type ListEnumConstanciaStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ConstanciaStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'EvaluationFormStatus'
+ */
+export type EnumEvaluationFormStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EvaluationFormStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'EvaluationFormStatus[]'
+ */
+export type ListEnumEvaluationFormStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EvaluationFormStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
+ * Reference to a field of type 'Float'
+ */
+export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+/**
+ * Reference to a field of type 'Float[]'
+ */
+export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+/**
+ * Reference to a field of type 'EvaluationScoreSource'
+ */
+export type EnumEvaluationScoreSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EvaluationScoreSource'>
+    
+
+
+/**
+ * Reference to a field of type 'EvaluationScoreSource[]'
+ */
+export type ListEnumEvaluationScoreSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EvaluationScoreSource[]'>
+    
+
+
+/**
+ * Reference to a field of type 'EvaluationSubmissionWorkflow'
+ */
+export type EnumEvaluationSubmissionWorkflowFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EvaluationSubmissionWorkflow'>
+    
+
+
+/**
+ * Reference to a field of type 'EvaluationSubmissionWorkflow[]'
+ */
+export type ListEnumEvaluationSubmissionWorkflowFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EvaluationSubmissionWorkflow[]'>
+    
+
+
+/**
+ * Reference to a field of type 'EvaluationOutcome'
+ */
+export type EnumEvaluationOutcomeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EvaluationOutcome'>
+    
+
+
+/**
+ * Reference to a field of type 'EvaluationOutcome[]'
+ */
+export type ListEnumEvaluationOutcomeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EvaluationOutcome[]'>
     
 
 
@@ -783,6 +1229,10 @@ export interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions 
 export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter
 export type GlobalOmitConfig = {
   constancia?: Prisma.ConstanciaOmit
+  evaluationForm?: Prisma.EvaluationFormOmit
+  evaluationQuestion?: Prisma.EvaluationQuestionOmit
+  evaluationSubmission?: Prisma.EvaluationSubmissionOmit
+  evaluationAnswer?: Prisma.EvaluationAnswerOmit
 }
 
 /* Types for Logging */
