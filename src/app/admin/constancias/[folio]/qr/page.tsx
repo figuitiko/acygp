@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+
+import { AdminNavigation } from "@/features/admin/admin-navigation";
 import { redirect } from "next/navigation";
 
 import { buildConstanciaValidationUrl } from "@/features/constancias/domain/constancia";
@@ -47,7 +49,10 @@ export default async function AdminConstanciaQrPage({ params }: AdminConstanciaQ
 
   return (
     <main className="min-h-[calc(100vh-220px)] bg-slate-50 px-4 py-10 lg:px-24">
-      <section className="mx-auto max-w-4xl rounded-2xl bg-white p-8 text-center shadow-xl">
+      <section className="mx-auto flex max-w-4xl flex-col gap-6">
+        <AdminNavigation currentPath="/admin/constancias" />
+
+        <div className="rounded-2xl bg-white p-8 text-center shadow-xl">
         <p className="text-sm uppercase tracking-[0.3em] text-main/70">QR de validación</p>
         <h1 className="mt-2 text-3xl font-bold text-main">{constancia.folio}</h1>
         <p className="mt-2 text-slate-600">{constancia.recipientName} · {constancia.courseName}</p>
@@ -71,6 +76,7 @@ export default async function AdminConstanciaQrPage({ params }: AdminConstanciaQ
           <Link href="/admin/constancias" className="rounded-lg border border-slate-300 px-5 py-3 font-bold text-main transition hover:bg-slate-50">
             Volver al admin
           </Link>
+        </div>
         </div>
       </section>
     </main>
