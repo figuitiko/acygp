@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { AdminNavigation } from "@/features/admin/admin-navigation";
+
 import {
   createConstanciaFromForm,
   createQrCodeDataUrl,
@@ -72,6 +74,8 @@ export default async function AdminConstanciasPage({ searchParams }: AdminConsta
   return (
     <main className="min-h-[calc(100vh-220px)] bg-slate-50 px-4 py-10 lg:px-24">
       <section className="mx-auto flex max-w-6xl flex-col gap-8">
+        <AdminNavigation currentPath="/admin/constancias" />
+
         <div className="flex flex-col gap-4 rounded-2xl bg-main p-6 text-white shadow-lg md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-sm uppercase tracking-[0.3em] text-white/70">Panel interno</p>

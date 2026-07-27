@@ -1,4 +1,6 @@
 import Link from "next/link";
+
+import { AdminNavigation } from "@/features/admin/admin-navigation";
 import { notFound, redirect } from "next/navigation";
 
 import { isAdminAuthenticated } from "@/features/constancias/server/admin-auth";
@@ -16,6 +18,8 @@ export default async function EvaluationFormMappingPage({ params, searchParams }
   return (
     <main className="min-h-[calc(100vh-220px)] bg-slate-50 px-4 py-10 lg:px-24">
       <section className="mx-auto flex max-w-4xl flex-col gap-6">
+        <AdminNavigation currentPath="/admin/evaluaciones" />
+
         <Link href="/admin/evaluaciones" className="font-bold text-main underline">← Volver a evaluaciones</Link>
         <div className="rounded-2xl bg-main p-6 text-white shadow-lg">
           <p className="text-sm uppercase tracking-[0.3em] text-white/70">Mapeo de Google Form</p>
