@@ -2,6 +2,8 @@
 
 import { useId, useState } from "react";
 
+import { SubmitButton } from "@/features/admin/submit-button";
+
 type RevokeConfirmationFormProps = {
   constanciaId: string;
   folio: string;
@@ -53,9 +55,9 @@ export function RevokeConfirmationForm({
               </button>
               <form action={action}>
                 <input type="hidden" name="id" value={constanciaId} />
-                <button className="rounded-lg bg-red-600 px-4 py-2 font-bold text-white transition hover:bg-red-700">
+                <SubmitButton className="rounded-lg bg-red-600 px-4 py-2 font-bold text-white transition hover:bg-red-700" pendingLabel="Revocando…">
                   Sí, revocar
-                </button>
+                </SubmitButton>
               </form>
             </div>
           </div>

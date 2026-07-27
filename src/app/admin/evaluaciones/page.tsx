@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { AdminNavigation } from "@/features/admin/admin-navigation";
+import { SubmitButton } from "@/features/admin/submit-button";
 
 import { isAdminAuthenticated } from "@/features/constancias/server/admin-auth";
 import { buildEvaluationDetailPath, buildIndividualEvaluationPdfPath } from "@/features/evaluaciones/domain/routes";
@@ -63,9 +64,9 @@ export default async function AdminEvaluacionesPage({ searchParams }: Props) {
             </p>
           </div>
           <form action={logoutEvaluacionesAdmin}>
-            <button className="rounded-full border border-white/50 px-4 py-2 font-semibold text-white transition hover:bg-white hover:text-main">
+            <SubmitButton className="rounded-full border border-white/50 px-4 py-2 font-semibold text-white transition hover:bg-white hover:text-main" pendingLabel="Cerrando…">
               Cerrar sesión
-            </button>
+            </SubmitButton>
           </form>
         </div>
 
@@ -176,7 +177,18 @@ export default async function AdminEvaluacionesPage({ searchParams }: Props) {
                     </td>
                   </tr>
                 ))}
-                {result.items.length === 0 && <tr><td colSpan={6} className="p-6 text-center text-slate-500">No hay evaluaciones con esos filtros.</td></tr>}
+                {result.items.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="p-8 text-center">
+                      <h3 className="font-bold text-slate-900">{hasEvaluationFilters(query) ? "No encontramos evaluaciones" : "Todavía no hay evaluaciones"}</h3>
+                      <p className="mx-auto mt-2 max-w-xl text-sm text-slate-500">
+                        {hasEvaluationFilters(query)
+                          ? "Probá con otros filtros o limpiá la búsqueda."
+                          : "Cuando un Google Form envíe su primera respuesta, aparecerá acá para mapearla y revisarla."}
+                      </p>
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -197,7 +209,7 @@ function LoginPanel({ authState }: { authState?: string }) {
         {authState === "invalid" && <p className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">Clave incorrecta.</p>}
         <form action={loginEvaluacionesAdmin} className="mt-6 flex flex-col gap-4">
           <label className="flex flex-col gap-2 text-sm font-semibold text-slate-700">Clave admin<input name="password" type="password" required className="rounded-lg border border-slate-300 px-4 py-3" /></label>
-          <button className="rounded-lg bg-main px-4 py-3 font-bold text-white">Entrar</button>
+          <SubmitButton className="rounded-lg bg-main px-4 py-3 font-bold text-white" pendingLabel="Entrando…">Entrar</SubmitButton>
         </form>
       </section>
     </main>
@@ -216,4 +228,9 @@ function Pagination({ basePath, query, pagination }: { basePath: string; query: 
 
 function formatDate(date: Date) {
   return new Intl.DateTimeFormat("es-MX", { dateStyle: "medium", timeZone: "America/Mexico_City" }).format(date);
+}
+
+
+function hasEvaluationFilters(query: Record<string, string | undefined>) {
+  return Boolean(query.q || query.formId || query.workflowStatus || query.outcome || query.from || query.to);
 }

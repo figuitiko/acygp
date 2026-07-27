@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { AdminNavigation } from "@/features/admin/admin-navigation";
+import { SubmitButton } from "@/features/admin/submit-button";
 import { redirect } from "next/navigation";
 
 import { updateConstanciaFromForm } from "@/features/constancias/server/actions";
@@ -77,9 +78,9 @@ export default async function EditConstanciaPage({ params, searchParams }: EditC
             <input name="issuedAt" type="date" required defaultValue={toDateInputValue(constancia.issuedAt)} className="rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-main focus:ring-2 focus:ring-main/20" />
           </label>
           <div className="flex flex-wrap gap-3 pt-2">
-            <button className="rounded-lg bg-main px-5 py-3 font-bold text-white transition hover:bg-blue-800">
+            <SubmitButton className="rounded-lg bg-main px-5 py-3 font-bold text-white transition hover:bg-blue-800" pendingLabel="Guardando cambios…">
               Guardar cambios
-            </button>
+            </SubmitButton>
             <Link href="/admin/constancias" className="rounded-lg border border-slate-300 px-5 py-3 font-bold text-main transition hover:bg-slate-50">
               Cancelar
             </Link>
