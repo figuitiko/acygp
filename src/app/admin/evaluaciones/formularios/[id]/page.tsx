@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { AdminNavigation } from "@/features/admin/admin-navigation";
+import { SubmitButton } from "@/features/admin/submit-button";
 import { notFound, redirect } from "next/navigation";
 
 import { isAdminAuthenticated } from "@/features/constancias/server/admin-auth";
@@ -36,7 +37,7 @@ export default async function EvaluationFormMappingPage({ params, searchParams }
             <label className="flex items-center gap-2 rounded-lg border border-slate-200 p-3 text-sm font-semibold text-slate-700"><input type="checkbox" name="useRespondentEmail" defaultChecked={form.useRespondentEmail} /> Usar email recolectado por Google Forms</label>
             <label className="text-sm font-semibold text-slate-700">O pregunta con email del participante<select name="participantEmailQuestionId" defaultValue={form.participantEmailQuestionId ?? ""} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"><option value="">No usar pregunta</option>{form.questions.map((q) => <option key={q.id} value={q.googleItemId}>{q.title}</option>)}</select></label>
             <label className="text-sm font-semibold text-slate-700">Umbral de aprobación (%)<input name="passingThreshold" type="number" min="0" max="100" step="0.01" defaultValue={form.passingThreshold} required className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" /></label>
-            <button className="rounded-lg bg-main px-4 py-3 font-bold text-white">Guardar mapeo y activar formulario</button>
+            <SubmitButton className="rounded-lg bg-main px-4 py-3 font-bold text-white" pendingLabel="Guardando mapeo…">Guardar mapeo y activar formulario</SubmitButton>
           </form>
           <div className="mt-8">
             <h3 className="font-bold text-slate-900">Preguntas detectadas</h3>

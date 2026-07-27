@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { AdminNavigation } from "@/features/admin/admin-navigation";
+import { SubmitButton } from "@/features/admin/submit-button";
 
 import {
   createConstanciaFromForm,
@@ -85,9 +86,9 @@ export default async function AdminConstanciasPage({ searchParams }: AdminConsta
             </p>
           </div>
           <form action={logoutAdmin}>
-            <button className="rounded-full border border-white/50 px-4 py-2 font-semibold text-white transition hover:bg-white hover:text-main">
+            <SubmitButton className="rounded-full border border-white/50 px-4 py-2 font-semibold text-white transition hover:bg-white hover:text-main" pendingLabel="Cerrando…">
               Cerrar sesión
-            </button>
+            </SubmitButton>
           </form>
         </div>
 
@@ -136,9 +137,9 @@ function LoginPanel({ authState }: { authState?: string }) {
               className="rounded-lg border border-slate-300 px-4 py-3 text-base outline-none transition focus:border-main focus:ring-2 focus:ring-main/20"
             />
           </label>
-          <button className="rounded-lg bg-main px-4 py-3 font-bold text-white transition hover:bg-blue-800">
+          <SubmitButton className="rounded-lg bg-main px-4 py-3 font-bold text-white transition hover:bg-blue-800" pendingLabel="Entrando…">
             Entrar
-          </button>
+          </SubmitButton>
         </form>
       </section>
     </main>
@@ -284,9 +285,9 @@ function CreateConstanciaForm() {
           Fecha de emisión
           <input name="issuedAt" type="date" required className="rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-main focus:ring-2 focus:ring-main/20" />
         </label>
-        <button className="rounded-lg bg-main px-4 py-3 font-bold text-white transition hover:bg-blue-800">
+        <SubmitButton className="rounded-lg bg-main px-4 py-3 font-bold text-white transition hover:bg-blue-800" pendingLabel="Creando constancia…">
           Crear constancia
-        </button>
+        </SubmitButton>
       </form>
     </section>
   );
@@ -338,9 +339,16 @@ function ConstanciaList({
       </div>
       <div className="mt-6 flex flex-col gap-4">
         {constancias.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-slate-300 p-6 text-center text-slate-500">
-            Todavía no hay constancias emitidas.
-          </p>
+          <div className="rounded-xl border border-dashed border-slate-300 p-6 text-center">
+            <h3 className="font-bold text-slate-900">
+              {search ? "No encontramos constancias" : "Todavía no hay constancias"}
+            </h3>
+            <p className="mt-2 text-sm text-slate-500">
+              {search
+                ? "Probá con otro folio, nombre, curso o limpiá la búsqueda."
+                : "Creá la primera constancia desde el formulario de la izquierda."}
+            </p>
+          </div>
         ) : (
           constancias.map((constancia) => (
             <article key={constancia.id} className="grid gap-4 rounded-xl border border-slate-200 p-4 md:grid-cols-[1fr_auto]">
@@ -378,9 +386,9 @@ function ConstanciaList({
                   ) : (
                     <form action={reactivateConstanciaFromForm}>
                       <input type="hidden" name="id" value={constancia.id} />
-                      <button className="rounded-lg border border-emerald-200 px-3 py-2 text-sm font-bold text-emerald-700 transition hover:bg-emerald-50">
+                      <SubmitButton className="rounded-lg border border-emerald-200 px-3 py-2 text-sm font-bold text-emerald-700 transition hover:bg-emerald-50" pendingLabel="Reactivando…">
                         Reactivar
-                      </button>
+                      </SubmitButton>
                     </form>
                   )}
                 </div>

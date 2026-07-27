@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { AdminNavigation } from "@/features/admin/admin-navigation";
+import { SubmitButton } from "@/features/admin/submit-button";
 import { notFound, redirect } from "next/navigation";
 
 import { isAdminAuthenticated } from "@/features/constancias/server/admin-auth";
@@ -70,7 +71,7 @@ export default async function EvaluationDetailPage({ params, searchParams }: Pro
                 <label className="text-sm font-semibold text-slate-700">Score máximo<input name="finalMaxScore" type="number" step="0.01" min="0.01" required defaultValue={defaultMaxScore} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" /></label>
                 <p className="rounded-lg bg-blue-50 p-3 text-sm text-main">Umbral actual: <strong>{submission.form.passingThreshold}%</strong>. Al revisar se guarda una copia histórica de este umbral.</p>
                 <label className="text-sm font-semibold text-slate-700">Notas del revisor<textarea name="reviewerNotes" defaultValue={submission.reviewerNotes ?? ""} rows={5} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" /></label>
-                <button className="rounded-lg bg-main px-4 py-3 font-bold text-white">Guardar revisión</button>
+                <SubmitButton className="rounded-lg bg-main px-4 py-3 font-bold text-white" pendingLabel="Guardando revisión…">Guardar revisión</SubmitButton>
               </form>
             )}
             <Link href={buildIndividualEvaluationPdfPath(submission.id)} className="mt-4 block rounded-lg bg-slate-900 px-4 py-3 text-center font-bold text-white">Descargar PDF individual</Link>
