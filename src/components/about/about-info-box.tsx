@@ -51,9 +51,13 @@ const ListItem = ({ children, className = "" }: ListItemProps) => {
 const CTA = ({ headingCTA, itemsCTA, className = "" }: CTAProps) => {
   return (
     <div className="flex flex-col p-12 gap-8 items-center justify-center w-full">
-      <h3 className="bg-white text-main text-3xl p-6 font-bold">
+      <a
+        href="/files/Ficha de Registro Interna.docx"
+        download="Ficha de Registro Interna.docx"
+        className="bg-white text-main text-3xl p-6 font-bold hover:bg-gray-100 transition-colors"
+      >
         {headingCTA}
-      </h3>
+      </a>
       <div
         className={`flex justify-between gap-4 mt-2 w-full max-w-4xl ${className}`}
       >
