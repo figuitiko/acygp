@@ -25,11 +25,11 @@ export const HeroContact = () => {
               <PhoneIcon />
               <div className="flex gap-2">
                 <a href="tel:+529512227059" className="hover:underline">
-                  951 222 7059
+                  +52 (951) 222-7959
                 </a>
                 /
-                <a href="tel:+522464668120" className="hover:underline">
-                  246 466 8120
+                <a href="tel:+522463610651" className="hover:underline">
+                  +52 (246) 361-0651
                 </a>
               </div>
             </div>
