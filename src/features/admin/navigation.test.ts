@@ -7,6 +7,7 @@ describe("admin navigation", () => {
     expect(getAdminNavigationItems()).toEqual([
       { label: "Constancias", href: "/admin/constancias" },
       { label: "Evaluaciones", href: "/admin/evaluaciones" },
+      { label: "Archivos", href: "/admin/archivos" },
     ]);
   });
 

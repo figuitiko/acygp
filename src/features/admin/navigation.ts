@@ -6,6 +6,7 @@ export type AdminNavigationItem = {
 const ADMIN_NAVIGATION_ITEMS: AdminNavigationItem[] = [
   { label: "Constancias", href: "/admin/constancias" },
   { label: "Evaluaciones", href: "/admin/evaluaciones" },
+  { label: "Archivos", href: "/admin/archivos" },
 ];
 
 export function getAdminNavigationItems() {
