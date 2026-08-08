@@ -401,7 +401,9 @@ export const ModelName = {
   EvaluationForm: 'EvaluationForm',
   EvaluationQuestion: 'EvaluationQuestion',
   EvaluationSubmission: 'EvaluationSubmission',
-  EvaluationAnswer: 'EvaluationAnswer'
+  EvaluationAnswer: 'EvaluationAnswer',
+  FileCategory: 'FileCategory',
+  FileAsset: 'FileAsset'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -417,7 +419,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "constancia" | "evaluationForm" | "evaluationQuestion" | "evaluationSubmission" | "evaluationAnswer"
+    modelProps: "constancia" | "evaluationForm" | "evaluationQuestion" | "evaluationSubmission" | "evaluationAnswer" | "fileCategory" | "fileAsset"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -791,6 +793,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    FileCategory: {
+      payload: Prisma.$FileCategoryPayload<ExtArgs>
+      fields: Prisma.FileCategoryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FileCategoryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileCategoryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FileCategoryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileCategoryPayload>
+        }
+        findFirst: {
+          args: Prisma.FileCategoryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileCategoryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FileCategoryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileCategoryPayload>
+        }
+        findMany: {
+          args: Prisma.FileCategoryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileCategoryPayload>[]
+        }
+        create: {
+          args: Prisma.FileCategoryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileCategoryPayload>
+        }
+        createMany: {
+          args: Prisma.FileCategoryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FileCategoryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileCategoryPayload>[]
+        }
+        delete: {
+          args: Prisma.FileCategoryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileCategoryPayload>
+        }
+        update: {
+          args: Prisma.FileCategoryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileCategoryPayload>
+        }
+        deleteMany: {
+          args: Prisma.FileCategoryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FileCategoryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FileCategoryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileCategoryPayload>[]
+        }
+        upsert: {
+          args: Prisma.FileCategoryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileCategoryPayload>
+        }
+        aggregate: {
+          args: Prisma.FileCategoryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFileCategory>
+        }
+        groupBy: {
+          args: Prisma.FileCategoryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FileCategoryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FileCategoryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FileCategoryCountAggregateOutputType> | number
+        }
+      }
+    }
+    FileAsset: {
+      payload: Prisma.$FileAssetPayload<ExtArgs>
+      fields: Prisma.FileAssetFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FileAssetFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileAssetPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FileAssetFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileAssetPayload>
+        }
+        findFirst: {
+          args: Prisma.FileAssetFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileAssetPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FileAssetFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileAssetPayload>
+        }
+        findMany: {
+          args: Prisma.FileAssetFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileAssetPayload>[]
+        }
+        create: {
+          args: Prisma.FileAssetCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileAssetPayload>
+        }
+        createMany: {
+          args: Prisma.FileAssetCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FileAssetCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileAssetPayload>[]
+        }
+        delete: {
+          args: Prisma.FileAssetDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileAssetPayload>
+        }
+        update: {
+          args: Prisma.FileAssetUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileAssetPayload>
+        }
+        deleteMany: {
+          args: Prisma.FileAssetDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FileAssetUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FileAssetUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileAssetPayload>[]
+        }
+        upsert: {
+          args: Prisma.FileAssetUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileAssetPayload>
+        }
+        aggregate: {
+          args: Prisma.FileAssetAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFileAsset>
+        }
+        groupBy: {
+          args: Prisma.FileAssetGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FileAssetGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FileAssetCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FileAssetCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -913,6 +1063,29 @@ export const EvaluationAnswerScalarFieldEnum = {
 } as const
 
 export type EvaluationAnswerScalarFieldEnum = (typeof EvaluationAnswerScalarFieldEnum)[keyof typeof EvaluationAnswerScalarFieldEnum]
+
+
+export const FileCategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt'
+} as const
+
+export type FileCategoryScalarFieldEnum = (typeof FileCategoryScalarFieldEnum)[keyof typeof FileCategoryScalarFieldEnum]
+
+
+export const FileAssetScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  blobUrl: 'blobUrl',
+  blobPathname: 'blobPathname',
+  contentType: 'contentType',
+  size: 'size',
+  categoryId: 'categoryId',
+  createdAt: 'createdAt'
+} as const
+
+export type FileAssetScalarFieldEnum = (typeof FileAssetScalarFieldEnum)[keyof typeof FileAssetScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1233,6 +1406,8 @@ export type GlobalOmitConfig = {
   evaluationQuestion?: Prisma.EvaluationQuestionOmit
   evaluationSubmission?: Prisma.EvaluationSubmissionOmit
   evaluationAnswer?: Prisma.EvaluationAnswerOmit
+  fileCategory?: Prisma.FileCategoryOmit
+  fileAsset?: Prisma.FileAssetOmit
 }
 
 /* Types for Logging */

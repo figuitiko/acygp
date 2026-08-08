@@ -55,7 +55,9 @@ export const ModelName = {
   EvaluationForm: 'EvaluationForm',
   EvaluationQuestion: 'EvaluationQuestion',
   EvaluationSubmission: 'EvaluationSubmission',
-  EvaluationAnswer: 'EvaluationAnswer'
+  EvaluationAnswer: 'EvaluationAnswer',
+  FileCategory: 'FileCategory',
+  FileAsset: 'FileAsset'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -157,6 +159,29 @@ export const EvaluationAnswerScalarFieldEnum = {
 } as const
 
 export type EvaluationAnswerScalarFieldEnum = (typeof EvaluationAnswerScalarFieldEnum)[keyof typeof EvaluationAnswerScalarFieldEnum]
+
+
+export const FileCategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt'
+} as const
+
+export type FileCategoryScalarFieldEnum = (typeof FileCategoryScalarFieldEnum)[keyof typeof FileCategoryScalarFieldEnum]
+
+
+export const FileAssetScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  blobUrl: 'blobUrl',
+  blobPathname: 'blobPathname',
+  contentType: 'contentType',
+  size: 'size',
+  categoryId: 'categoryId',
+  createdAt: 'createdAt'
+} as const
+
+export type FileAssetScalarFieldEnum = (typeof FileAssetScalarFieldEnum)[keyof typeof FileAssetScalarFieldEnum]
 
 
 export const SortOrder = {

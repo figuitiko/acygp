@@ -133,3 +133,24 @@ model EvaluationAnswer {
   @@index([submissionId])
   @@index([googleItemId])
 }
+
+model FileCategory {
+  id        String      @id @default(cuid())
+  name      String      @unique
+  createdAt DateTime    @default(now())
+  files     FileAsset[]
+}
+
+model FileAsset {
+  id           String       @id @default(cuid())
+  name         String
+  blobUrl      String
+  blobPathname String
+  contentType  String
+  size         Int
+  categoryId   String
+  category     FileCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  createdAt    DateTime     @default(now())
+
+  @@index([categoryId])
+}

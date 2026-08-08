@@ -42,3 +42,13 @@ export type EvaluationSubmission = Prisma.EvaluationSubmissionModel
  * 
  */
 export type EvaluationAnswer = Prisma.EvaluationAnswerModel
+/**
+ * Model FileCategory
+ * 
+ */
+export type FileCategory = Prisma.FileCategoryModel
+/**
+ * Model FileAsset
+ * 
+ */
+export type FileAsset = Prisma.FileAssetModel
