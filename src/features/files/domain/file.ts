@@ -4,6 +4,8 @@ export const ALLOWED_FILE_CONTENT_TYPES = new Set([
   "application/pdf",
   "application/msword",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.ms-powerpoint",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation",
   "image/png",
   "image/jpeg",
 ]);
@@ -35,4 +37,24 @@ export function sanitizeFileName(name: string): string {
     .trim()
     .replace(/\s+/g, " ")
     .replace(/[/\\?%*:|"<>]/g, "-");
+}
+
+const OFFICE_VIEWER_CONTENT_TYPES = new Set([
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.ms-powerpoint",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+]);
+
+export function buildFileViewUrl(blobUrl: string, contentType: string): string {
+  if (OFFICE_VIEWER_CONTENT_TYPES.has(contentType)) {
+    return `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(blobUrl)}`;
+  }
+
+  return blobUrl;
+}
+
+export function buildFileDownloadUrl(blobUrl: string): string {
+  const separator = blobUrl.includes("?") ? "&" : "?";
+  return `${blobUrl}${separator}download=1`;
 }

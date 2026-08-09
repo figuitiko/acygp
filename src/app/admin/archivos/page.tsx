@@ -7,8 +7,11 @@ import { SubmitButton } from "@/features/admin/submit-button";
 
 import { isAdminAuthenticated } from "@/features/constancias/server/admin-auth";
 
+import { CategoryChip } from "@/features/files/client/category-chip";
 import { ConfirmDeleteForm } from "@/features/files/client/confirm-delete-form";
+import { NewCategoryChip } from "@/features/files/client/new-category-chip";
 import { UploadFileForm } from "@/features/files/client/upload-form";
+import { buildFileDownloadUrl, buildFileViewUrl } from "@/features/files/domain/file";
 import {
   createCategoryFromForm,
   deleteCategoryFromForm,
@@ -37,6 +40,7 @@ type AdminArchivosPageProps = {
     categoryDeleted?: string;
     page?: string;
     q?: string;
+    categoryId?: string;
   }>;
 };
 
@@ -49,7 +53,7 @@ export default async function AdminArchivosPage({ searchParams }: AdminArchivosP
 
   const [categories, filesResult] = await Promise.all([
     listCategoriesWithCounts(),
-    listFileAssetsPage({ page: query.page, search: query.q }),
+    listFileAssetsPage({ page: query.page, search: query.q, categoryId: query.categoryId }),
   ]);
 
   return (
@@ -77,19 +81,25 @@ export default async function AdminArchivosPage({ searchParams }: AdminArchivosP
 
         <StatusMessage query={query} />
 
-        <CategoriesSection categories={categories} />
+        <CategoriesBar categories={categories} activeCategoryId={query.categoryId} search={query.q} />
 
         <section className="grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.4fr)]">
           <section className="rounded-2xl bg-white p-6 shadow-md">
             <h2 className="text-2xl font-bold text-main">Subir archivo</h2>
             <p className="mt-2 text-sm text-slate-600">
-              Máximo 4MB. Formatos permitidos: PDF, Word, PNG, JPG.
+              Máximo 4MB. Formatos permitidos: PDF, Word, PowerPoint, PNG, JPG.
             </p>
             <div className="mt-6">
               <UploadFileForm categories={categories} action={uploadFileFromForm} />
             </div>
           </section>
-          <FileListSection files={filesResult.items} pagination={filesResult.pagination} search={query.q} />
+          <FileListSection
+            files={filesResult.items}
+            pagination={filesResult.pagination}
+            search={query.q}
+            categoryId={query.categoryId}
+            categoryName={categories.find((category) => category.id === query.categoryId)?.name}
+          />
         </section>
       </section>
     </main>
@@ -169,7 +179,7 @@ function StatusMessage({ query }: { query: Awaited<AdminArchivosPageProps["searc
   }
 
   if (query.error === "unsupported-type") {
-    return <ErrorBanner>Formato no permitido. Usá PDF, Word, PNG o JPG.</ErrorBanner>;
+    return <ErrorBanner>Formato no permitido. Usá PDF, Word, PowerPoint, PNG o JPG.</ErrorBanner>;
   }
 
   if (query.error === "empty-name") {
@@ -207,80 +217,52 @@ function ErrorBanner({ children }: { children: ReactNode }) {
 
 type CategoryWithCount = Awaited<ReturnType<typeof listCategoriesWithCounts>>[number];
 
-function CategoriesSection({ categories }: { categories: CategoryWithCount[] }) {
+function CategoriesBar({
+  categories,
+  activeCategoryId,
+  search,
+}: {
+  categories: CategoryWithCount[];
+  activeCategoryId?: string;
+  search?: string;
+}) {
+  const totalFiles = categories.reduce((total, category) => total + category._count.files, 0);
+
   return (
     <section className="rounded-2xl bg-white p-6 shadow-md">
       <h2 className="text-2xl font-bold text-main">Categorías</h2>
-      <form action={createCategoryFromForm} className="mt-4 flex flex-col gap-3 sm:flex-row">
-        <label className="sr-only" htmlFor="new-category-name">
-          Nueva categoría
-        </label>
-        <input
-          id="new-category-name"
-          name="name"
-          required
-          placeholder="Nombre de la categoría"
-          className="min-w-0 flex-1 rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-main focus:ring-2 focus:ring-main/20"
-        />
-        <SubmitButton
-          className="rounded-lg bg-main px-5 py-3 font-bold text-white transition hover:bg-blue-800"
-          pendingLabel="Creando…"
+      <p className="mt-1 text-sm text-slate-500">
+        Elegí una para filtrar los archivos. Usá el lápiz para renombrar o el tacho para eliminar (solo si está
+        vacía).
+      </p>
+      <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Categorías">
+        <Link
+          href={buildArchivosPageHref({ page: 1, search })}
+          aria-current={!activeCategoryId ? "true" : undefined}
+          className={[
+            "rounded-full px-4 py-2 text-sm font-bold transition",
+            !activeCategoryId
+              ? "bg-main text-white shadow"
+              : "border border-slate-300 text-slate-700 hover:border-main hover:text-main",
+          ].join(" ")}
         >
-          Crear categoría
-        </SubmitButton>
-      </form>
-
-      {categories.length === 0 ? (
-        <p className="mt-6 text-sm text-slate-500">Todavía no hay categorías. Creá la primera arriba.</p>
-      ) : (
-        <div className="mt-6 flex flex-col gap-3">
-          {categories.map((category) => (
-            <CategoryRow key={category.id} category={category} />
-          ))}
-        </div>
-      )}
+          Todas ({totalFiles})
+        </Link>
+        {categories.map((category) => (
+          <CategoryChip
+            key={category.id}
+            categoryId={category.id}
+            name={category.name}
+            fileCount={category._count.files}
+            isActive={activeCategoryId === category.id}
+            href={buildArchivosPageHref({ page: 1, search, categoryId: category.id })}
+            renameAction={renameCategoryFromForm}
+            deleteAction={deleteCategoryFromForm}
+          />
+        ))}
+        <NewCategoryChip action={createCategoryFromForm} />
+      </div>
     </section>
-  );
-}
-
-function CategoryRow({ category }: { category: CategoryWithCount }) {
-  return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 p-4">
-      <form action={renameCategoryFromForm} className="flex min-w-0 flex-1 items-center gap-3">
-        <input type="hidden" name="id" value={category.id} />
-        <input
-          name="name"
-          defaultValue={category.name}
-          required
-          className="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-main focus:ring-2 focus:ring-main/20"
-        />
-        <span className="whitespace-nowrap text-sm text-slate-500">{category._count.files} archivo(s)</span>
-        <SubmitButton
-          className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-bold text-main transition hover:bg-slate-50"
-          pendingLabel="Guardando…"
-        >
-          Guardar
-        </SubmitButton>
-      </form>
-      {category._count.files === 0 ? (
-        <ConfirmDeleteForm
-          triggerLabel="Eliminar"
-          title="¿Eliminar categoría?"
-          description={`Vas a eliminar la categoría "${category.name}". Esta acción no se puede deshacer.`}
-          confirmLabel="Sí, eliminar"
-          pendingLabel="Eliminando…"
-          action={deleteCategoryFromForm}
-          hiddenFields={{ id: category.id }}
-        />
-      ) : (
-        <span
-          className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-400"
-          title="Reasigná o eliminá sus archivos primero"
-        >
-          No se puede eliminar
-        </span>
-      )}
-    </div>
   );
 }
 
@@ -290,24 +272,33 @@ function FileListSection({
   files,
   pagination,
   search,
+  categoryId,
+  categoryName,
 }: {
   files: FilesPageResult["items"];
   pagination: FilesPageResult["pagination"];
   search?: string;
+  categoryId?: string;
+  categoryName?: string;
 }) {
+  const hasFilters = Boolean(search || categoryId);
+
   return (
     <section className="rounded-2xl bg-white p-6 shadow-md">
       <div className="flex flex-col gap-4">
         <div>
           <h2 className="text-2xl font-bold text-main">Archivos</h2>
           <p className="mt-1 text-sm text-slate-500">
-            Página {pagination.page} de {pagination.totalPages} · {pagination.totalItems} archivos
+            Página {pagination.page} de {pagination.totalPages} · {pagination.totalItems} archivo(s)
+            {categoryName && <> en &ldquo;{categoryName}&rdquo;</>}
           </p>
         </div>
+
         <form method="get" action="/admin/archivos" className="flex flex-col gap-3 sm:flex-row">
           <label className="sr-only" htmlFor="archivos-search">
             Buscar archivos
           </label>
+          {categoryId && <input type="hidden" name="categoryId" value={categoryId} />}
           <input
             id="archivos-search"
             name="q"
@@ -318,7 +309,7 @@ function FileListSection({
           <button className="rounded-lg bg-main px-5 py-3 font-bold text-white transition hover:bg-blue-800">
             Buscar
           </button>
-          {search && (
+          {hasFilters && (
             <Link
               href="/admin/archivos"
               className="rounded-lg border border-slate-300 px-5 py-3 text-center font-bold text-main transition hover:bg-slate-50"
@@ -333,11 +324,11 @@ function FileListSection({
         {files.length === 0 ? (
           <div className="rounded-xl border border-dashed border-slate-300 p-6 text-center">
             <h3 className="font-bold text-slate-900">
-              {search ? "No encontramos archivos" : "Todavía no hay archivos"}
+              {hasFilters ? "No encontramos archivos" : "Todavía no hay archivos"}
             </h3>
             <p className="mt-2 text-sm text-slate-500">
-              {search
-                ? "Probá con otro nombre o categoría, o limpiá la búsqueda."
+              {hasFilters
+                ? "Probá con otra categoría o nombre, o limpiá los filtros."
                 : "Subí el primero desde el formulario de arriba."}
             </p>
           </div>
@@ -346,7 +337,7 @@ function FileListSection({
         )}
       </div>
 
-      <PaginationControls pagination={pagination} search={search} />
+      <PaginationControls pagination={pagination} search={search} categoryId={categoryId} />
     </section>
   );
 }
@@ -361,9 +352,19 @@ function FileRow({ file }: { file: FilesPageResult["items"][number] }) {
             {file.category.name} · {formatFileSize(file.size)} · {formatDate(file.createdAt)}
           </p>
         </div>
-        <a href={file.blobUrl} target="_blank" rel="noreferrer" className="font-bold text-main hover:underline">
-          Descargar
-        </a>
+        <div className="flex items-center gap-4">
+          <a
+            href={buildFileViewUrl(file.blobUrl, file.contentType)}
+            target="_blank"
+            rel="noreferrer"
+            className="font-bold text-main hover:underline"
+          >
+            Ver
+          </a>
+          <a href={buildFileDownloadUrl(file.blobUrl)} className="font-bold text-slate-600 hover:underline">
+            Descargar
+          </a>
+        </div>
       </div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <form action={renameFileFromForm} className="flex min-w-0 flex-1 items-center gap-3">
@@ -398,16 +399,18 @@ function FileRow({ file }: { file: FilesPageResult["items"][number] }) {
 function PaginationControls({
   pagination,
   search,
+  categoryId,
 }: {
   pagination: FilesPageResult["pagination"];
   search?: string;
+  categoryId?: string;
 }) {
   if (pagination.totalPages <= 1) {
     return null;
   }
 
-  const previousHref = buildArchivosPageHref({ page: pagination.page - 1, search });
-  const nextHref = buildArchivosPageHref({ page: pagination.page + 1, search });
+  const previousHref = buildArchivosPageHref({ page: pagination.page - 1, search, categoryId });
+  const nextHref = buildArchivosPageHref({ page: pagination.page + 1, search, categoryId });
 
   return (
     <nav
@@ -435,11 +438,23 @@ function PaginationControls({
   );
 }
 
-function buildArchivosPageHref({ page, search }: { page: number; search?: string }) {
+function buildArchivosPageHref({
+  page,
+  search,
+  categoryId,
+}: {
+  page: number;
+  search?: string;
+  categoryId?: string;
+}) {
   const params = new URLSearchParams({ page: String(page) });
 
   if (search) {
     params.set("q", search);
+  }
+
+  if (categoryId) {
+    params.set("categoryId", categoryId);
   }
 
   return `/admin/archivos?${params.toString()}`;

@@ -103,11 +103,13 @@ export async function deleteFileAsset(id: string) {
 export async function listFileAssetsPage({
   page,
   search,
+  categoryId,
 }: {
   page?: string | number | null;
   search?: string | null;
+  categoryId?: string | null;
 } = {}) {
-  const where = createFileAssetsSearchWhere(search);
+  const where = createFileAssetsWhere(search, categoryId);
   const totalItems = await prisma.fileAsset.count({ where });
   const pagination = createPagination({ page, pageSize: FILES_PAGE_SIZE, totalItems });
 
@@ -122,17 +124,23 @@ export async function listFileAssetsPage({
   return { items, pagination };
 }
 
-function createFileAssetsSearchWhere(search?: string | null): FileAssetWhereInput | undefined {
+function createFileAssetsWhere(
+  search: string | null | undefined,
+  categoryId: string | null | undefined
+): FileAssetWhereInput | undefined {
   const normalizedSearch = normalizeFileSearchTerm(search);
+  const searchClause: FileAssetWhereInput | undefined = normalizedSearch
+    ? {
+        OR: [
+          { name: { contains: normalizedSearch, mode: "insensitive" } },
+          { category: { name: { contains: normalizedSearch, mode: "insensitive" } } },
+        ],
+      }
+    : undefined;
 
-  if (!normalizedSearch) {
-    return undefined;
+  if (searchClause && categoryId) {
+    return { AND: [searchClause, { categoryId }] };
   }
 
-  return {
-    OR: [
-      { name: { contains: normalizedSearch, mode: "insensitive" } },
-      { category: { name: { contains: normalizedSearch, mode: "insensitive" } } },
-    ],
-  };
+  return searchClause ?? (categoryId ? { categoryId } : undefined);
 }
