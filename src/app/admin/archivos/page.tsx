@@ -108,6 +108,11 @@ function LoginPanel({ authState }: { authState?: string }) {
             Clave incorrecta. Verificá ADMIN_PASSWORD.
           </p>
         )}
+        {authState === "required" && (
+          <p className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">
+            Tu sesión expiró. Ingresá de nuevo.
+          </p>
+        )}
         <form action={loginArchivosAdmin} className="mt-6 flex flex-col gap-4">
           <label className="flex flex-col gap-2 text-sm font-semibold text-slate-700">
             Clave admin
@@ -173,6 +178,14 @@ function StatusMessage({ query }: { query: Awaited<AdminArchivosPageProps["searc
 
   if (query.error === "invalid-data") {
     return <ErrorBanner>Datos inválidos. Revisá el formulario.</ErrorBanner>;
+  }
+
+  if (query.error === "category-exists") {
+    return <ErrorBanner>Ya existe una categoría con ese nombre.</ErrorBanner>;
+  }
+
+  if (query.error === "upload-failed") {
+    return <ErrorBanner>No pudimos subir el archivo. Intentá de nuevo.</ErrorBanner>;
   }
 
   return null;

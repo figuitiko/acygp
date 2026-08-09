@@ -17,6 +17,7 @@ import {
 import { normalizeCategoryName } from "../domain/category";
 import { sanitizeFileName, validateFileUpload } from "../domain/file";
 import {
+  CategoryExistsError,
   CategoryInUseError,
   createCategory,
   createFileAsset,
@@ -70,7 +71,15 @@ export async function createCategoryFromForm(formData: FormData) {
     redirect(`${FILES_PATH}?error=invalid-data`);
   }
 
-  await createCategory(result.data.name);
+  try {
+    await createCategory(result.data.name);
+  } catch (error) {
+    if (error instanceof CategoryExistsError) {
+      redirect(`${FILES_PATH}?error=category-exists`);
+    }
+
+    throw error;
+  }
 
   revalidatePath(FILES_PATH);
   redirect(`${FILES_PATH}?categoryCreated=1`);
@@ -88,7 +97,15 @@ export async function renameCategoryFromForm(formData: FormData) {
     redirect(`${FILES_PATH}?error=invalid-data`);
   }
 
-  await renameCategory(result.data.id, result.data.name);
+  try {
+    await renameCategory(result.data.id, result.data.name);
+  } catch (error) {
+    if (error instanceof CategoryExistsError) {
+      redirect(`${FILES_PATH}?error=category-exists`);
+    }
+
+    throw error;
+  }
 
   revalidatePath(FILES_PATH);
   redirect(`${FILES_PATH}?categoryRenamed=1`);
@@ -135,10 +152,17 @@ export async function uploadFileFromForm(formData: FormData) {
   }
 
   const safeName = sanitizeFileName(file.name);
-  const blob = await put(`archivos/${randomUUID()}-${safeName}`, file, {
-    access: "public",
-    contentType: file.type || undefined,
-  });
+  let blob;
+
+  try {
+    blob = await put(`archivos/${randomUUID()}-${safeName}`, file, {
+      access: "public",
+      contentType: file.type || undefined,
+    });
+  } catch (error) {
+    console.error("Failed to upload file to blob storage", error);
+    redirect(`${FILES_PATH}?error=upload-failed`);
+  }
 
   if (newCategoryName) {
     await createFileAssetWithNewCategory({

@@ -10,6 +10,8 @@ const FILES_PAGE_SIZE = 10;
 
 export class CategoryInUseError extends Error {}
 
+export class CategoryExistsError extends Error {}
+
 export async function listCategoriesWithCounts() {
   return prisma.fileCategory.findMany({
     orderBy: { name: "asc" },
@@ -18,11 +20,27 @@ export async function listCategoriesWithCounts() {
 }
 
 export async function createCategory(name: string) {
-  return prisma.fileCategory.create({ data: { name } });
+  try {
+    return await prisma.fileCategory.create({ data: { name } });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      throw new CategoryExistsError(`Category "${name}" already exists`);
+    }
+
+    throw error;
+  }
 }
 
 export async function renameCategory(id: string, name: string) {
-  return prisma.fileCategory.update({ where: { id }, data: { name } });
+  try {
+    return await prisma.fileCategory.update({ where: { id }, data: { name } });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      throw new CategoryExistsError(`Category "${name}" already exists`);
+    }
+
+    throw error;
+  }
 }
 
 export async function deleteCategory(id: string) {
