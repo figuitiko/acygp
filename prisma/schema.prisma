@@ -135,10 +135,16 @@ model EvaluationAnswer {
 }
 
 model FileCategory {
-  id        String      @id @default(cuid())
-  name      String      @unique
-  createdAt DateTime    @default(now())
+  id        String         @id @default(cuid())
+  name      String
+  parentId  String?
+  parent    FileCategory?  @relation("FolderHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
+  children  FileCategory[] @relation("FolderHierarchy")
+  createdAt DateTime       @default(now())
   files     FileAsset[]
+
+  @@unique([parentId, name])
+  @@index([parentId])
 }
 
 model FileAsset {

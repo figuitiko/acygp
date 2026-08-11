@@ -14,19 +14,20 @@ import {
   setAdminSessionCookie,
 } from "@/features/constancias/server/admin-auth";
 
-import { normalizeCategoryName } from "../domain/category";
 import { sanitizeFileName, validateFileUpload } from "../domain/file";
 import {
-  CategoryExistsError,
-  CategoryInUseError,
-  createCategory,
+  FolderHasFilesError,
+  FolderHasSubfoldersError,
+  FolderNameExistsError,
+  FolderNotFoundError,
   createFileAsset,
-  createFileAssetWithNewCategory,
-  deleteCategory,
+  createFolder,
   deleteFileAsset,
+  deleteFolder,
   getFileAssetById,
-  renameCategory,
+  moveFileToFolder,
   renameFileAsset,
+  renameFolder,
 } from "./repository";
 
 const FILES_PATH = "/admin/archivos";
@@ -36,8 +37,17 @@ const idAndNameSchema = z.object({
   name: z.string().trim().min(1, "El nombre es obligatorio"),
 });
 
-const newCategoryNameSchema = z.object({
+const newFolderSchema = z.object({
   name: z.string().trim().min(1, "El nombre es obligatorio"),
+  parentId: z
+    .string()
+    .trim()
+    .transform((value) => (value.length > 0 ? value : null)),
+});
+
+const moveFileSchema = z.object({
+  id: z.string().trim().min(1),
+  folderId: z.string().trim().min(1),
 });
 
 export async function loginArchivosAdmin(formData: FormData) {
@@ -62,30 +72,42 @@ async function requireArchivosAdmin() {
   }
 }
 
-export async function createCategoryFromForm(formData: FormData) {
+function buildRedirect(folderId: string | null, statusParam: string) {
+  return `${FILES_PATH}${folderId ? `?folderId=${folderId}&` : "?"}${statusParam}`;
+}
+
+function readReturnFolderId(formData: FormData) {
+  const value = formData.get("returnFolderId");
+  return typeof value === "string" && value.length > 0 ? value : null;
+}
+
+export async function createFolderFromForm(formData: FormData) {
   await requireArchivosAdmin();
 
-  const result = newCategoryNameSchema.safeParse({ name: formData.get("name") });
+  const result = newFolderSchema.safeParse({
+    name: formData.get("name"),
+    parentId: formData.get("parentId") ?? "",
+  });
 
   if (!result.success) {
     redirect(`${FILES_PATH}?error=invalid-data`);
   }
 
   try {
-    await createCategory(result.data.name);
+    await createFolder(result.data.name, result.data.parentId);
   } catch (error) {
-    if (error instanceof CategoryExistsError) {
-      redirect(`${FILES_PATH}?error=category-exists`);
+    if (error instanceof FolderNameExistsError) {
+      redirect(`${FILES_PATH}?error=folder-exists`);
     }
 
     throw error;
   }
 
   revalidatePath(FILES_PATH);
-  redirect(`${FILES_PATH}?categoryCreated=1`);
+  redirect(buildRedirect(result.data.parentId, "folderCreated=1"));
 }
 
-export async function renameCategoryFromForm(formData: FormData) {
+export async function renameFolderFromForm(formData: FormData) {
   await requireArchivosAdmin();
 
   const result = idAndNameSchema.safeParse({
@@ -98,46 +120,51 @@ export async function renameCategoryFromForm(formData: FormData) {
   }
 
   try {
-    await renameCategory(result.data.id, result.data.name);
+    await renameFolder(result.data.id, result.data.name);
   } catch (error) {
-    if (error instanceof CategoryExistsError) {
-      redirect(`${FILES_PATH}?error=category-exists`);
+    if (error instanceof FolderNameExistsError) {
+      redirect(`${FILES_PATH}?error=folder-exists`);
     }
 
     throw error;
   }
 
   revalidatePath(FILES_PATH);
-  redirect(`${FILES_PATH}?categoryRenamed=1`);
+  redirect(buildRedirect(result.data.id, "folderRenamed=1"));
 }
 
-export async function deleteCategoryFromForm(formData: FormData) {
+export async function deleteFolderFromForm(formData: FormData) {
   await requireArchivosAdmin();
 
   const id = String(formData.get("id") ?? "");
+  let parentId: string | null = null;
 
   try {
-    await deleteCategory(id);
+    const deleted = await deleteFolder(id);
+    parentId = deleted.parentId;
   } catch (error) {
-    if (error instanceof CategoryInUseError) {
-      redirect(`${FILES_PATH}?error=category-in-use`);
+    if (error instanceof FolderHasFilesError) {
+      redirect(`${FILES_PATH}?error=folder-has-files`);
+    }
+
+    if (error instanceof FolderHasSubfoldersError) {
+      redirect(`${FILES_PATH}?error=folder-has-subfolders`);
     }
 
     throw error;
   }
 
   revalidatePath(FILES_PATH);
-  redirect(`${FILES_PATH}?categoryDeleted=1`);
+  redirect(buildRedirect(parentId, "folderDeleted=1"));
 }
 
 export async function uploadFileFromForm(formData: FormData) {
   await requireArchivosAdmin();
 
   const file = formData.get("file");
-  const categoryId = String(formData.get("categoryId") ?? "");
-  const newCategoryName = normalizeCategoryName(String(formData.get("newCategoryName") ?? ""));
+  const folderId = String(formData.get("folderId") ?? "");
 
-  if (!(file instanceof File) || file.size === 0 || (!categoryId && !newCategoryName)) {
+  if (!(file instanceof File) || file.size === 0 || !folderId) {
     redirect(`${FILES_PATH}?error=invalid-data`);
   }
 
@@ -164,28 +191,43 @@ export async function uploadFileFromForm(formData: FormData) {
     redirect(`${FILES_PATH}?error=upload-failed`);
   }
 
-  if (newCategoryName) {
-    await createFileAssetWithNewCategory({
-      name: safeName,
-      blobUrl: blob.url,
-      blobPathname: blob.pathname,
-      contentType: file.type,
-      size: file.size,
-      categoryName: newCategoryName,
-    });
-  } else {
-    await createFileAsset({
-      name: safeName,
-      blobUrl: blob.url,
-      blobPathname: blob.pathname,
-      contentType: file.type,
-      size: file.size,
-      categoryId,
-    });
+  await createFileAsset({
+    name: safeName,
+    blobUrl: blob.url,
+    blobPathname: blob.pathname,
+    contentType: file.type,
+    size: file.size,
+    categoryId: folderId,
+  });
+
+  revalidatePath(FILES_PATH);
+  redirect(buildRedirect(folderId, `uploaded=${encodeURIComponent(safeName)}`));
+}
+
+export async function moveFileFromForm(formData: FormData) {
+  await requireArchivosAdmin();
+
+  const result = moveFileSchema.safeParse({
+    id: formData.get("id"),
+    folderId: formData.get("folderId"),
+  });
+
+  if (!result.success) {
+    redirect(`${FILES_PATH}?error=invalid-data`);
+  }
+
+  try {
+    await moveFileToFolder(result.data.id, result.data.folderId);
+  } catch (error) {
+    if (error instanceof FolderNotFoundError) {
+      redirect(`${FILES_PATH}?error=invalid-data`);
+    }
+
+    throw error;
   }
 
   revalidatePath(FILES_PATH);
-  redirect(`${FILES_PATH}?uploaded=${encodeURIComponent(safeName)}`);
+  redirect(buildRedirect(readReturnFolderId(formData), "fileMoved=1"));
 }
 
 export async function renameFileFromForm(formData: FormData) {
@@ -203,7 +245,7 @@ export async function renameFileFromForm(formData: FormData) {
   await renameFileAsset(result.data.id, result.data.name);
 
   revalidatePath(FILES_PATH);
-  redirect(`${FILES_PATH}?fileRenamed=1`);
+  redirect(buildRedirect(readReturnFolderId(formData), "fileRenamed=1"));
 }
 
 export async function deleteFileFromForm(formData: FormData) {
@@ -225,5 +267,5 @@ export async function deleteFileFromForm(formData: FormData) {
   await deleteFileAsset(id);
 
   revalidatePath(FILES_PATH);
-  redirect(`${FILES_PATH}?fileDeleted=1`);
+  redirect(buildRedirect(readReturnFolderId(formData), "fileDeleted=1"));
 }

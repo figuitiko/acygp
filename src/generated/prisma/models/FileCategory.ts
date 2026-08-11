@@ -27,18 +27,21 @@ export type AggregateFileCategory = {
 export type FileCategoryMinAggregateOutputType = {
   id: string | null
   name: string | null
+  parentId: string | null
   createdAt: Date | null
 }
 
 export type FileCategoryMaxAggregateOutputType = {
   id: string | null
   name: string | null
+  parentId: string | null
   createdAt: Date | null
 }
 
 export type FileCategoryCountAggregateOutputType = {
   id: number
   name: number
+  parentId: number
   createdAt: number
   _all: number
 }
@@ -47,18 +50,21 @@ export type FileCategoryCountAggregateOutputType = {
 export type FileCategoryMinAggregateInputType = {
   id?: true
   name?: true
+  parentId?: true
   createdAt?: true
 }
 
 export type FileCategoryMaxAggregateInputType = {
   id?: true
   name?: true
+  parentId?: true
   createdAt?: true
 }
 
 export type FileCategoryCountAggregateInputType = {
   id?: true
   name?: true
+  parentId?: true
   createdAt?: true
   _all?: true
 }
@@ -138,6 +144,7 @@ export type FileCategoryGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 export type FileCategoryGroupByOutputType = {
   id: string
   name: string
+  parentId: string | null
   createdAt: Date
   _count: FileCategoryCountAggregateOutputType | null
   _min: FileCategoryMinAggregateOutputType | null
@@ -165,30 +172,41 @@ export type FileCategoryWhereInput = {
   NOT?: Prisma.FileCategoryWhereInput | Prisma.FileCategoryWhereInput[]
   id?: Prisma.StringFilter<"FileCategory"> | string
   name?: Prisma.StringFilter<"FileCategory"> | string
+  parentId?: Prisma.StringNullableFilter<"FileCategory"> | string | null
   createdAt?: Prisma.DateTimeFilter<"FileCategory"> | Date | string
+  parent?: Prisma.XOR<Prisma.FileCategoryNullableScalarRelationFilter, Prisma.FileCategoryWhereInput> | null
+  children?: Prisma.FileCategoryListRelationFilter
   files?: Prisma.FileAssetListRelationFilter
 }
 
 export type FileCategoryOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  parentId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  parent?: Prisma.FileCategoryOrderByWithRelationInput
+  children?: Prisma.FileCategoryOrderByRelationAggregateInput
   files?: Prisma.FileAssetOrderByRelationAggregateInput
 }
 
 export type FileCategoryWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  name?: string
+  parentId_name?: Prisma.FileCategoryParentIdNameCompoundUniqueInput
   AND?: Prisma.FileCategoryWhereInput | Prisma.FileCategoryWhereInput[]
   OR?: Prisma.FileCategoryWhereInput[]
   NOT?: Prisma.FileCategoryWhereInput | Prisma.FileCategoryWhereInput[]
+  name?: Prisma.StringFilter<"FileCategory"> | string
+  parentId?: Prisma.StringNullableFilter<"FileCategory"> | string | null
   createdAt?: Prisma.DateTimeFilter<"FileCategory"> | Date | string
+  parent?: Prisma.XOR<Prisma.FileCategoryNullableScalarRelationFilter, Prisma.FileCategoryWhereInput> | null
+  children?: Prisma.FileCategoryListRelationFilter
   files?: Prisma.FileAssetListRelationFilter
-}, "id" | "name">
+}, "id" | "parentId_name">
 
 export type FileCategoryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  parentId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.FileCategoryCountOrderByAggregateInput
   _max?: Prisma.FileCategoryMaxOrderByAggregateInput
@@ -201,6 +219,7 @@ export type FileCategoryScalarWhereWithAggregatesInput = {
   NOT?: Prisma.FileCategoryScalarWhereWithAggregatesInput | Prisma.FileCategoryScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"FileCategory"> | string
   name?: Prisma.StringWithAggregatesFilter<"FileCategory"> | string
+  parentId?: Prisma.StringNullableWithAggregatesFilter<"FileCategory"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"FileCategory"> | Date | string
 }
 
@@ -208,13 +227,17 @@ export type FileCategoryCreateInput = {
   id?: string
   name: string
   createdAt?: Date | string
+  parent?: Prisma.FileCategoryCreateNestedOneWithoutChildrenInput
+  children?: Prisma.FileCategoryCreateNestedManyWithoutParentInput
   files?: Prisma.FileAssetCreateNestedManyWithoutCategoryInput
 }
 
 export type FileCategoryUncheckedCreateInput = {
   id?: string
   name: string
+  parentId?: string | null
   createdAt?: Date | string
+  children?: Prisma.FileCategoryUncheckedCreateNestedManyWithoutParentInput
   files?: Prisma.FileAssetUncheckedCreateNestedManyWithoutCategoryInput
 }
 
@@ -222,19 +245,24 @@ export type FileCategoryUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  parent?: Prisma.FileCategoryUpdateOneWithoutChildrenNestedInput
+  children?: Prisma.FileCategoryUpdateManyWithoutParentNestedInput
   files?: Prisma.FileAssetUpdateManyWithoutCategoryNestedInput
 }
 
 export type FileCategoryUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  children?: Prisma.FileCategoryUncheckedUpdateManyWithoutParentNestedInput
   files?: Prisma.FileAssetUncheckedUpdateManyWithoutCategoryNestedInput
 }
 
 export type FileCategoryCreateManyInput = {
   id?: string
   name: string
+  parentId?: string | null
   createdAt?: Date | string
 }
 
@@ -247,30 +275,112 @@ export type FileCategoryUpdateManyMutationInput = {
 export type FileCategoryUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type FileCategoryNullableScalarRelationFilter = {
+  is?: Prisma.FileCategoryWhereInput | null
+  isNot?: Prisma.FileCategoryWhereInput | null
+}
+
+export type FileCategoryListRelationFilter = {
+  every?: Prisma.FileCategoryWhereInput
+  some?: Prisma.FileCategoryWhereInput
+  none?: Prisma.FileCategoryWhereInput
+}
+
+export type FileCategoryOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
+export type FileCategoryParentIdNameCompoundUniqueInput = {
+  parentId: string
+  name: string
 }
 
 export type FileCategoryCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  parentId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type FileCategoryMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  parentId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type FileCategoryMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  parentId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type FileCategoryScalarRelationFilter = {
   is?: Prisma.FileCategoryWhereInput
   isNot?: Prisma.FileCategoryWhereInput
+}
+
+export type FileCategoryCreateNestedOneWithoutChildrenInput = {
+  create?: Prisma.XOR<Prisma.FileCategoryCreateWithoutChildrenInput, Prisma.FileCategoryUncheckedCreateWithoutChildrenInput>
+  connectOrCreate?: Prisma.FileCategoryCreateOrConnectWithoutChildrenInput
+  connect?: Prisma.FileCategoryWhereUniqueInput
+}
+
+export type FileCategoryCreateNestedManyWithoutParentInput = {
+  create?: Prisma.XOR<Prisma.FileCategoryCreateWithoutParentInput, Prisma.FileCategoryUncheckedCreateWithoutParentInput> | Prisma.FileCategoryCreateWithoutParentInput[] | Prisma.FileCategoryUncheckedCreateWithoutParentInput[]
+  connectOrCreate?: Prisma.FileCategoryCreateOrConnectWithoutParentInput | Prisma.FileCategoryCreateOrConnectWithoutParentInput[]
+  createMany?: Prisma.FileCategoryCreateManyParentInputEnvelope
+  connect?: Prisma.FileCategoryWhereUniqueInput | Prisma.FileCategoryWhereUniqueInput[]
+}
+
+export type FileCategoryUncheckedCreateNestedManyWithoutParentInput = {
+  create?: Prisma.XOR<Prisma.FileCategoryCreateWithoutParentInput, Prisma.FileCategoryUncheckedCreateWithoutParentInput> | Prisma.FileCategoryCreateWithoutParentInput[] | Prisma.FileCategoryUncheckedCreateWithoutParentInput[]
+  connectOrCreate?: Prisma.FileCategoryCreateOrConnectWithoutParentInput | Prisma.FileCategoryCreateOrConnectWithoutParentInput[]
+  createMany?: Prisma.FileCategoryCreateManyParentInputEnvelope
+  connect?: Prisma.FileCategoryWhereUniqueInput | Prisma.FileCategoryWhereUniqueInput[]
+}
+
+export type FileCategoryUpdateOneWithoutChildrenNestedInput = {
+  create?: Prisma.XOR<Prisma.FileCategoryCreateWithoutChildrenInput, Prisma.FileCategoryUncheckedCreateWithoutChildrenInput>
+  connectOrCreate?: Prisma.FileCategoryCreateOrConnectWithoutChildrenInput
+  upsert?: Prisma.FileCategoryUpsertWithoutChildrenInput
+  disconnect?: Prisma.FileCategoryWhereInput | boolean
+  delete?: Prisma.FileCategoryWhereInput | boolean
+  connect?: Prisma.FileCategoryWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FileCategoryUpdateToOneWithWhereWithoutChildrenInput, Prisma.FileCategoryUpdateWithoutChildrenInput>, Prisma.FileCategoryUncheckedUpdateWithoutChildrenInput>
+}
+
+export type FileCategoryUpdateManyWithoutParentNestedInput = {
+  create?: Prisma.XOR<Prisma.FileCategoryCreateWithoutParentInput, Prisma.FileCategoryUncheckedCreateWithoutParentInput> | Prisma.FileCategoryCreateWithoutParentInput[] | Prisma.FileCategoryUncheckedCreateWithoutParentInput[]
+  connectOrCreate?: Prisma.FileCategoryCreateOrConnectWithoutParentInput | Prisma.FileCategoryCreateOrConnectWithoutParentInput[]
+  upsert?: Prisma.FileCategoryUpsertWithWhereUniqueWithoutParentInput | Prisma.FileCategoryUpsertWithWhereUniqueWithoutParentInput[]
+  createMany?: Prisma.FileCategoryCreateManyParentInputEnvelope
+  set?: Prisma.FileCategoryWhereUniqueInput | Prisma.FileCategoryWhereUniqueInput[]
+  disconnect?: Prisma.FileCategoryWhereUniqueInput | Prisma.FileCategoryWhereUniqueInput[]
+  delete?: Prisma.FileCategoryWhereUniqueInput | Prisma.FileCategoryWhereUniqueInput[]
+  connect?: Prisma.FileCategoryWhereUniqueInput | Prisma.FileCategoryWhereUniqueInput[]
+  update?: Prisma.FileCategoryUpdateWithWhereUniqueWithoutParentInput | Prisma.FileCategoryUpdateWithWhereUniqueWithoutParentInput[]
+  updateMany?: Prisma.FileCategoryUpdateManyWithWhereWithoutParentInput | Prisma.FileCategoryUpdateManyWithWhereWithoutParentInput[]
+  deleteMany?: Prisma.FileCategoryScalarWhereInput | Prisma.FileCategoryScalarWhereInput[]
+}
+
+export type FileCategoryUncheckedUpdateManyWithoutParentNestedInput = {
+  create?: Prisma.XOR<Prisma.FileCategoryCreateWithoutParentInput, Prisma.FileCategoryUncheckedCreateWithoutParentInput> | Prisma.FileCategoryCreateWithoutParentInput[] | Prisma.FileCategoryUncheckedCreateWithoutParentInput[]
+  connectOrCreate?: Prisma.FileCategoryCreateOrConnectWithoutParentInput | Prisma.FileCategoryCreateOrConnectWithoutParentInput[]
+  upsert?: Prisma.FileCategoryUpsertWithWhereUniqueWithoutParentInput | Prisma.FileCategoryUpsertWithWhereUniqueWithoutParentInput[]
+  createMany?: Prisma.FileCategoryCreateManyParentInputEnvelope
+  set?: Prisma.FileCategoryWhereUniqueInput | Prisma.FileCategoryWhereUniqueInput[]
+  disconnect?: Prisma.FileCategoryWhereUniqueInput | Prisma.FileCategoryWhereUniqueInput[]
+  delete?: Prisma.FileCategoryWhereUniqueInput | Prisma.FileCategoryWhereUniqueInput[]
+  connect?: Prisma.FileCategoryWhereUniqueInput | Prisma.FileCategoryWhereUniqueInput[]
+  update?: Prisma.FileCategoryUpdateWithWhereUniqueWithoutParentInput | Prisma.FileCategoryUpdateWithWhereUniqueWithoutParentInput[]
+  updateMany?: Prisma.FileCategoryUpdateManyWithWhereWithoutParentInput | Prisma.FileCategoryUpdateManyWithWhereWithoutParentInput[]
+  deleteMany?: Prisma.FileCategoryScalarWhereInput | Prisma.FileCategoryScalarWhereInput[]
 }
 
 export type FileCategoryCreateNestedOneWithoutFilesInput = {
@@ -287,16 +397,120 @@ export type FileCategoryUpdateOneRequiredWithoutFilesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.FileCategoryUpdateToOneWithWhereWithoutFilesInput, Prisma.FileCategoryUpdateWithoutFilesInput>, Prisma.FileCategoryUncheckedUpdateWithoutFilesInput>
 }
 
+export type FileCategoryCreateWithoutChildrenInput = {
+  id?: string
+  name: string
+  createdAt?: Date | string
+  parent?: Prisma.FileCategoryCreateNestedOneWithoutChildrenInput
+  files?: Prisma.FileAssetCreateNestedManyWithoutCategoryInput
+}
+
+export type FileCategoryUncheckedCreateWithoutChildrenInput = {
+  id?: string
+  name: string
+  parentId?: string | null
+  createdAt?: Date | string
+  files?: Prisma.FileAssetUncheckedCreateNestedManyWithoutCategoryInput
+}
+
+export type FileCategoryCreateOrConnectWithoutChildrenInput = {
+  where: Prisma.FileCategoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.FileCategoryCreateWithoutChildrenInput, Prisma.FileCategoryUncheckedCreateWithoutChildrenInput>
+}
+
+export type FileCategoryCreateWithoutParentInput = {
+  id?: string
+  name: string
+  createdAt?: Date | string
+  children?: Prisma.FileCategoryCreateNestedManyWithoutParentInput
+  files?: Prisma.FileAssetCreateNestedManyWithoutCategoryInput
+}
+
+export type FileCategoryUncheckedCreateWithoutParentInput = {
+  id?: string
+  name: string
+  createdAt?: Date | string
+  children?: Prisma.FileCategoryUncheckedCreateNestedManyWithoutParentInput
+  files?: Prisma.FileAssetUncheckedCreateNestedManyWithoutCategoryInput
+}
+
+export type FileCategoryCreateOrConnectWithoutParentInput = {
+  where: Prisma.FileCategoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.FileCategoryCreateWithoutParentInput, Prisma.FileCategoryUncheckedCreateWithoutParentInput>
+}
+
+export type FileCategoryCreateManyParentInputEnvelope = {
+  data: Prisma.FileCategoryCreateManyParentInput | Prisma.FileCategoryCreateManyParentInput[]
+  skipDuplicates?: boolean
+}
+
+export type FileCategoryUpsertWithoutChildrenInput = {
+  update: Prisma.XOR<Prisma.FileCategoryUpdateWithoutChildrenInput, Prisma.FileCategoryUncheckedUpdateWithoutChildrenInput>
+  create: Prisma.XOR<Prisma.FileCategoryCreateWithoutChildrenInput, Prisma.FileCategoryUncheckedCreateWithoutChildrenInput>
+  where?: Prisma.FileCategoryWhereInput
+}
+
+export type FileCategoryUpdateToOneWithWhereWithoutChildrenInput = {
+  where?: Prisma.FileCategoryWhereInput
+  data: Prisma.XOR<Prisma.FileCategoryUpdateWithoutChildrenInput, Prisma.FileCategoryUncheckedUpdateWithoutChildrenInput>
+}
+
+export type FileCategoryUpdateWithoutChildrenInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  parent?: Prisma.FileCategoryUpdateOneWithoutChildrenNestedInput
+  files?: Prisma.FileAssetUpdateManyWithoutCategoryNestedInput
+}
+
+export type FileCategoryUncheckedUpdateWithoutChildrenInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  files?: Prisma.FileAssetUncheckedUpdateManyWithoutCategoryNestedInput
+}
+
+export type FileCategoryUpsertWithWhereUniqueWithoutParentInput = {
+  where: Prisma.FileCategoryWhereUniqueInput
+  update: Prisma.XOR<Prisma.FileCategoryUpdateWithoutParentInput, Prisma.FileCategoryUncheckedUpdateWithoutParentInput>
+  create: Prisma.XOR<Prisma.FileCategoryCreateWithoutParentInput, Prisma.FileCategoryUncheckedCreateWithoutParentInput>
+}
+
+export type FileCategoryUpdateWithWhereUniqueWithoutParentInput = {
+  where: Prisma.FileCategoryWhereUniqueInput
+  data: Prisma.XOR<Prisma.FileCategoryUpdateWithoutParentInput, Prisma.FileCategoryUncheckedUpdateWithoutParentInput>
+}
+
+export type FileCategoryUpdateManyWithWhereWithoutParentInput = {
+  where: Prisma.FileCategoryScalarWhereInput
+  data: Prisma.XOR<Prisma.FileCategoryUpdateManyMutationInput, Prisma.FileCategoryUncheckedUpdateManyWithoutParentInput>
+}
+
+export type FileCategoryScalarWhereInput = {
+  AND?: Prisma.FileCategoryScalarWhereInput | Prisma.FileCategoryScalarWhereInput[]
+  OR?: Prisma.FileCategoryScalarWhereInput[]
+  NOT?: Prisma.FileCategoryScalarWhereInput | Prisma.FileCategoryScalarWhereInput[]
+  id?: Prisma.StringFilter<"FileCategory"> | string
+  name?: Prisma.StringFilter<"FileCategory"> | string
+  parentId?: Prisma.StringNullableFilter<"FileCategory"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"FileCategory"> | Date | string
+}
+
 export type FileCategoryCreateWithoutFilesInput = {
   id?: string
   name: string
   createdAt?: Date | string
+  parent?: Prisma.FileCategoryCreateNestedOneWithoutChildrenInput
+  children?: Prisma.FileCategoryCreateNestedManyWithoutParentInput
 }
 
 export type FileCategoryUncheckedCreateWithoutFilesInput = {
   id?: string
   name: string
+  parentId?: string | null
   createdAt?: Date | string
+  children?: Prisma.FileCategoryUncheckedCreateNestedManyWithoutParentInput
 }
 
 export type FileCategoryCreateOrConnectWithoutFilesInput = {
@@ -319,9 +533,41 @@ export type FileCategoryUpdateWithoutFilesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  parent?: Prisma.FileCategoryUpdateOneWithoutChildrenNestedInput
+  children?: Prisma.FileCategoryUpdateManyWithoutParentNestedInput
 }
 
 export type FileCategoryUncheckedUpdateWithoutFilesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  children?: Prisma.FileCategoryUncheckedUpdateManyWithoutParentNestedInput
+}
+
+export type FileCategoryCreateManyParentInput = {
+  id?: string
+  name: string
+  createdAt?: Date | string
+}
+
+export type FileCategoryUpdateWithoutParentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  children?: Prisma.FileCategoryUpdateManyWithoutParentNestedInput
+  files?: Prisma.FileAssetUpdateManyWithoutCategoryNestedInput
+}
+
+export type FileCategoryUncheckedUpdateWithoutParentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  children?: Prisma.FileCategoryUncheckedUpdateManyWithoutParentNestedInput
+  files?: Prisma.FileAssetUncheckedUpdateManyWithoutCategoryNestedInput
+}
+
+export type FileCategoryUncheckedUpdateManyWithoutParentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -333,10 +579,12 @@ export type FileCategoryUncheckedUpdateWithoutFilesInput = {
  */
 
 export type FileCategoryCountOutputType = {
+  children: number
   files: number
 }
 
 export type FileCategoryCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  children?: boolean | FileCategoryCountOutputTypeCountChildrenArgs
   files?: boolean | FileCategoryCountOutputTypeCountFilesArgs
 }
 
@@ -353,6 +601,13 @@ export type FileCategoryCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types
 /**
  * FileCategoryCountOutputType without action
  */
+export type FileCategoryCountOutputTypeCountChildrenArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FileCategoryWhereInput
+}
+
+/**
+ * FileCategoryCountOutputType without action
+ */
 export type FileCategoryCountOutputTypeCountFilesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.FileAssetWhereInput
 }
@@ -361,7 +616,10 @@ export type FileCategoryCountOutputTypeCountFilesArgs<ExtArgs extends runtime.Ty
 export type FileCategorySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  parentId?: boolean
   createdAt?: boolean
+  parent?: boolean | Prisma.FileCategory$parentArgs<ExtArgs>
+  children?: boolean | Prisma.FileCategory$childrenArgs<ExtArgs>
   files?: boolean | Prisma.FileCategory$filesArgs<ExtArgs>
   _count?: boolean | Prisma.FileCategoryCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["fileCategory"]>
@@ -369,37 +627,51 @@ export type FileCategorySelect<ExtArgs extends runtime.Types.Extensions.Internal
 export type FileCategorySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  parentId?: boolean
   createdAt?: boolean
+  parent?: boolean | Prisma.FileCategory$parentArgs<ExtArgs>
 }, ExtArgs["result"]["fileCategory"]>
 
 export type FileCategorySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  parentId?: boolean
   createdAt?: boolean
+  parent?: boolean | Prisma.FileCategory$parentArgs<ExtArgs>
 }, ExtArgs["result"]["fileCategory"]>
 
 export type FileCategorySelectScalar = {
   id?: boolean
   name?: boolean
+  parentId?: boolean
   createdAt?: boolean
 }
 
-export type FileCategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "createdAt", ExtArgs["result"]["fileCategory"]>
+export type FileCategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "parentId" | "createdAt", ExtArgs["result"]["fileCategory"]>
 export type FileCategoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  parent?: boolean | Prisma.FileCategory$parentArgs<ExtArgs>
+  children?: boolean | Prisma.FileCategory$childrenArgs<ExtArgs>
   files?: boolean | Prisma.FileCategory$filesArgs<ExtArgs>
   _count?: boolean | Prisma.FileCategoryCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type FileCategoryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type FileCategoryIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type FileCategoryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  parent?: boolean | Prisma.FileCategory$parentArgs<ExtArgs>
+}
+export type FileCategoryIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  parent?: boolean | Prisma.FileCategory$parentArgs<ExtArgs>
+}
 
 export type $FileCategoryPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "FileCategory"
   objects: {
+    parent: Prisma.$FileCategoryPayload<ExtArgs> | null
+    children: Prisma.$FileCategoryPayload<ExtArgs>[]
     files: Prisma.$FileAssetPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
+    parentId: string | null
     createdAt: Date
   }, ExtArgs["result"]["fileCategory"]>
   composites: {}
@@ -795,6 +1067,8 @@ readonly fields: FileCategoryFieldRefs;
  */
 export interface Prisma__FileCategoryClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  parent<T extends Prisma.FileCategory$parentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FileCategory$parentArgs<ExtArgs>>): Prisma.Prisma__FileCategoryClient<runtime.Types.Result.GetResult<Prisma.$FileCategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  children<T extends Prisma.FileCategory$childrenArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FileCategory$childrenArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FileCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   files<T extends Prisma.FileCategory$filesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FileCategory$filesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FileAssetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -827,6 +1101,7 @@ export interface Prisma__FileCategoryClient<T, Null = never, ExtArgs extends run
 export interface FileCategoryFieldRefs {
   readonly id: Prisma.FieldRef<"FileCategory", 'String'>
   readonly name: Prisma.FieldRef<"FileCategory", 'String'>
+  readonly parentId: Prisma.FieldRef<"FileCategory", 'String'>
   readonly createdAt: Prisma.FieldRef<"FileCategory", 'DateTime'>
 }
     
@@ -1082,6 +1357,10 @@ export type FileCategoryCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    */
   data: Prisma.FileCategoryCreateManyInput | Prisma.FileCategoryCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FileCategoryIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1152,6 +1431,10 @@ export type FileCategoryUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    * Limit how many FileCategories to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FileCategoryIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1218,6 +1501,49 @@ export type FileCategoryDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Limit how many FileCategories to delete.
    */
   limit?: number
+}
+
+/**
+ * FileCategory.parent
+ */
+export type FileCategory$parentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FileCategory
+   */
+  select?: Prisma.FileCategorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FileCategory
+   */
+  omit?: Prisma.FileCategoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FileCategoryInclude<ExtArgs> | null
+  where?: Prisma.FileCategoryWhereInput
+}
+
+/**
+ * FileCategory.children
+ */
+export type FileCategory$childrenArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FileCategory
+   */
+  select?: Prisma.FileCategorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FileCategory
+   */
+  omit?: Prisma.FileCategoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FileCategoryInclude<ExtArgs> | null
+  where?: Prisma.FileCategoryWhereInput
+  orderBy?: Prisma.FileCategoryOrderByWithRelationInput | Prisma.FileCategoryOrderByWithRelationInput[]
+  cursor?: Prisma.FileCategoryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FileCategoryScalarFieldEnum | Prisma.FileCategoryScalarFieldEnum[]
 }
 
 /**

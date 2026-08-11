@@ -7,22 +7,31 @@ import { SubmitButton } from "@/features/admin/submit-button";
 
 import { isAdminAuthenticated } from "@/features/constancias/server/admin-auth";
 
-import { CategoryChip } from "@/features/files/client/category-chip";
 import { ConfirmDeleteForm } from "@/features/files/client/confirm-delete-form";
-import { NewCategoryChip } from "@/features/files/client/new-category-chip";
+import { FolderTree } from "@/features/files/client/folder-tree";
+import { MoveFileForm } from "@/features/files/client/move-file-form";
+import { NewFolderRow } from "@/features/files/client/new-folder-row";
 import { UploadFileForm } from "@/features/files/client/upload-form";
 import { buildFileDownloadUrl, buildFileViewUrl } from "@/features/files/domain/file";
 import {
-  createCategoryFromForm,
-  deleteCategoryFromForm,
+  buildFolderTree,
+  flattenForSelect,
+  getFolderPath,
+  type FolderCountRow,
+  type FolderNode,
+} from "@/features/files/domain/folder-tree";
+import {
+  createFolderFromForm,
   deleteFileFromForm,
+  deleteFolderFromForm,
   loginArchivosAdmin,
   logoutArchivosAdmin,
-  renameCategoryFromForm,
+  moveFileFromForm,
   renameFileFromForm,
+  renameFolderFromForm,
   uploadFileFromForm,
 } from "@/features/files/server/actions";
-import { listCategoriesWithCounts, listFileAssetsPage } from "@/features/files/server/repository";
+import { listFileAssetsPage, listFoldersWithCounts } from "@/features/files/server/repository";
 
 export const metadata = {
   title: "Admin archivos | ACyGP",
@@ -35,12 +44,13 @@ type AdminArchivosPageProps = {
     uploaded?: string;
     fileRenamed?: string;
     fileDeleted?: string;
-    categoryCreated?: string;
-    categoryRenamed?: string;
-    categoryDeleted?: string;
+    fileMoved?: string;
+    folderCreated?: string;
+    folderRenamed?: string;
+    folderDeleted?: string;
     page?: string;
     q?: string;
-    categoryId?: string;
+    folderId?: string;
   }>;
 };
 
@@ -51,10 +61,19 @@ export default async function AdminArchivosPage({ searchParams }: AdminArchivosP
     return <LoginPanel authState={query.auth} />;
   }
 
-  const [categories, filesResult] = await Promise.all([
-    listCategoriesWithCounts(),
-    listFileAssetsPage({ page: query.page, search: query.q, categoryId: query.categoryId }),
+  const [folders, filesResult] = await Promise.all([
+    listFoldersWithCounts(),
+    listFileAssetsPage({ page: query.page, search: query.q, folderId: query.folderId }),
   ]);
+
+  const tree = buildFolderTree(folders);
+  const activeFolderId = query.folderId ?? null;
+  const activePath = activeFolderId ? getFolderPath(folders, activeFolderId) : [];
+  const expandedIds = new Set(activePath.map((folder) => folder.id));
+  const folderOptions = flattenForSelect(tree);
+  const activeFolder = activePath.at(-1) ?? null;
+  const subfolders = activeFolderId ? (findNode(tree, activeFolderId)?.children ?? []) : [];
+  const totalFiles = folders.reduce((total, folder) => total + folder._count.files, 0);
 
   return (
     <main className="min-h-[calc(100vh-220px)] bg-slate-50 px-4 py-10 lg:px-24">
@@ -66,7 +85,7 @@ export default async function AdminArchivosPage({ searchParams }: AdminArchivosP
             <p className="text-sm uppercase tracking-[0.3em] text-white/70">Panel interno</p>
             <h1 className="mt-2 text-3xl font-bold">Archivos ACyGP</h1>
             <p className="mt-2 max-w-3xl text-white/80">
-              Subí, organizá y gestioná los archivos internos por categoría.
+              Subí, organizá y gestioná los archivos internos en carpetas y subcarpetas.
             </p>
           </div>
           <form action={logoutArchivosAdmin}>
@@ -81,29 +100,56 @@ export default async function AdminArchivosPage({ searchParams }: AdminArchivosP
 
         <StatusMessage query={query} />
 
-        <CategoriesBar categories={categories} activeCategoryId={query.categoryId} search={query.q} />
-
-        <section className="grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.4fr)]">
-          <section className="rounded-2xl bg-white p-6 shadow-md">
-            <h2 className="text-2xl font-bold text-main">Subir archivo</h2>
-            <p className="mt-2 text-sm text-slate-600">
-              Máximo 4MB. Formatos permitidos: PDF, Word, PowerPoint, PNG, JPG.
-            </p>
-            <div className="mt-6">
-              <UploadFileForm categories={categories} action={uploadFileFromForm} />
-            </div>
-          </section>
-          <FileListSection
-            files={filesResult.items}
-            pagination={filesResult.pagination}
-            search={query.q}
-            categoryId={query.categoryId}
-            categoryName={categories.find((category) => category.id === query.categoryId)?.name}
+        <div className="flex flex-col gap-6 lg:flex-row">
+          <Sidebar
+            tree={tree}
+            activeFolderId={activeFolderId}
+            expandedIds={expandedIds}
+            totalFiles={totalFiles}
           />
-        </section>
+
+          <div className="flex flex-1 flex-col gap-6">
+            {activeFolder && <Breadcrumbs path={activePath} />}
+
+            <section className="rounded-2xl bg-white p-6 shadow-md">
+              <h2 className="text-2xl font-bold text-main">Subir archivo</h2>
+              <p className="mt-2 text-sm text-slate-600">
+                Máximo 4MB. Formatos permitidos: PDF, Word, PowerPoint, PNG, JPG.
+              </p>
+              <div className="mt-6">
+                <UploadFileForm
+                  key={activeFolderId ?? "root"}
+                  folderOptions={folderOptions}
+                  defaultFolderId={activeFolderId}
+                  action={uploadFileFromForm}
+                />
+              </div>
+            </section>
+
+            {activeFolder && subfolders.length > 0 && <SubfoldersSection subfolders={subfolders} />}
+
+            <FileListSection
+              files={filesResult.items}
+              pagination={filesResult.pagination}
+              search={query.q}
+              folderId={activeFolderId ?? undefined}
+              folderName={activeFolder?.name}
+              folderOptions={folderOptions}
+            />
+          </div>
+        </div>
       </section>
     </main>
   );
+}
+
+function findNode(nodes: FolderNode[], id: string): FolderNode | null {
+  for (const node of nodes) {
+    if (node.id === id) return node;
+    const found = findNode(node.children, id);
+    if (found) return found;
+  }
+  return null;
 }
 
 function LoginPanel({ authState }: { authState?: string }) {
@@ -112,7 +158,7 @@ function LoginPanel({ authState }: { authState?: string }) {
       <section className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
         <p className="text-sm uppercase tracking-[0.3em] text-main/70">Acceso interno</p>
         <h1 className="mt-2 text-3xl font-bold text-main">Admin archivos</h1>
-        <p className="mt-3 text-slate-600">Ingresá la clave interna para gestionar archivos y categorías.</p>
+        <p className="mt-3 text-slate-600">Ingresá la clave interna para gestionar archivos y carpetas.</p>
         {authState === "invalid" && (
           <p className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
             Clave incorrecta. Verificá ADMIN_PASSWORD.
@@ -158,20 +204,32 @@ function StatusMessage({ query }: { query: Awaited<AdminArchivosPageProps["searc
     return <SuccessBanner>Archivo eliminado correctamente.</SuccessBanner>;
   }
 
-  if (query.categoryCreated) {
-    return <SuccessBanner>Categoría creada correctamente.</SuccessBanner>;
+  if (query.fileMoved) {
+    return <SuccessBanner>Archivo movido correctamente.</SuccessBanner>;
   }
 
-  if (query.categoryRenamed) {
-    return <SuccessBanner>Categoría renombrada correctamente.</SuccessBanner>;
+  if (query.folderCreated) {
+    return <SuccessBanner>Carpeta creada correctamente.</SuccessBanner>;
   }
 
-  if (query.categoryDeleted) {
-    return <SuccessBanner>Categoría eliminada correctamente.</SuccessBanner>;
+  if (query.folderRenamed) {
+    return <SuccessBanner>Carpeta renombrada correctamente.</SuccessBanner>;
   }
 
-  if (query.error === "category-in-use") {
-    return <ErrorBanner>No se puede eliminar: la categoría todavía tiene archivos asignados.</ErrorBanner>;
+  if (query.folderDeleted) {
+    return <SuccessBanner>Carpeta eliminada correctamente.</SuccessBanner>;
+  }
+
+  if (query.error === "folder-has-files") {
+    return <ErrorBanner>No se puede eliminar: la carpeta todavía tiene archivos asignados.</ErrorBanner>;
+  }
+
+  if (query.error === "folder-has-subfolders") {
+    return <ErrorBanner>No se puede eliminar: la carpeta todavía tiene subcarpetas.</ErrorBanner>;
+  }
+
+  if (query.error === "folder-exists") {
+    return <ErrorBanner>Ya existe una carpeta con ese nombre en esta ubicación.</ErrorBanner>;
   }
 
   if (query.error === "file-too-large") {
@@ -188,10 +246,6 @@ function StatusMessage({ query }: { query: Awaited<AdminArchivosPageProps["searc
 
   if (query.error === "invalid-data") {
     return <ErrorBanner>Datos inválidos. Revisá el formulario.</ErrorBanner>;
-  }
-
-  if (query.error === "category-exists") {
-    return <ErrorBanner>Ya existe una categoría con ese nombre.</ErrorBanner>;
   }
 
   if (query.error === "upload-failed") {
@@ -215,73 +269,115 @@ function ErrorBanner({ children }: { children: ReactNode }) {
   );
 }
 
-type CategoryWithCount = Awaited<ReturnType<typeof listCategoriesWithCounts>>[number];
-
-function CategoriesBar({
-  categories,
-  activeCategoryId,
-  search,
+function Sidebar({
+  tree,
+  activeFolderId,
+  expandedIds,
+  totalFiles,
 }: {
-  categories: CategoryWithCount[];
-  activeCategoryId?: string;
-  search?: string;
+  tree: FolderNode[];
+  activeFolderId: string | null;
+  expandedIds: ReadonlySet<string>;
+  totalFiles: number;
 }) {
-  const totalFiles = categories.reduce((total, category) => total + category._count.files, 0);
+  return (
+    <aside className="w-full shrink-0 rounded-2xl bg-white p-4 shadow-md lg:w-72">
+      <Link
+        href="/admin/archivos"
+        aria-current={!activeFolderId ? "true" : undefined}
+        className={[
+          "block rounded-lg px-2 py-1.5 text-sm font-bold transition",
+          !activeFolderId ? "bg-main text-white" : "text-slate-700 hover:bg-slate-100",
+        ].join(" ")}
+      >
+        Todos los archivos ({totalFiles})
+      </Link>
 
+      <div className="mt-3">
+        <FolderTree
+          key={activeFolderId ?? "root"}
+          nodes={tree}
+          activeFolderId={activeFolderId}
+          expandedIds={expandedIds}
+          createAction={createFolderFromForm}
+          renameAction={renameFolderFromForm}
+          deleteAction={deleteFolderFromForm}
+        />
+      </div>
+
+      <div className="mt-3">
+        <NewFolderRow action={createFolderFromForm} />
+      </div>
+    </aside>
+  );
+}
+
+function Breadcrumbs({ path }: { path: FolderCountRow[] }) {
+  return (
+    <nav
+      aria-label="Ruta de carpetas"
+      className="flex flex-wrap items-center gap-1 text-sm font-semibold text-slate-500"
+    >
+      <Link href="/admin/archivos" className="hover:text-main hover:underline">
+        Todos los archivos
+      </Link>
+      {path.map((folder, index) => {
+        const isLast = index === path.length - 1;
+        return (
+          <span key={folder.id} className="flex items-center gap-1">
+            <span aria-hidden="true">/</span>
+            {isLast ? (
+              <span className="text-slate-900">{folder.name}</span>
+            ) : (
+              <Link href={`/admin/archivos?folderId=${folder.id}`} className="hover:text-main hover:underline">
+                {folder.name}
+              </Link>
+            )}
+          </span>
+        );
+      })}
+    </nav>
+  );
+}
+
+function SubfoldersSection({ subfolders }: { subfolders: FolderNode[] }) {
   return (
     <section className="rounded-2xl bg-white p-6 shadow-md">
-      <h2 className="text-2xl font-bold text-main">Categorías</h2>
-      <p className="mt-1 text-sm text-slate-500">
-        Elegí una para filtrar los archivos. Usá el lápiz para renombrar o el tacho para eliminar (solo si está
-        vacía).
-      </p>
-      <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Categorías">
-        <Link
-          href={buildArchivosPageHref({ page: 1, search })}
-          aria-current={!activeCategoryId ? "true" : undefined}
-          className={[
-            "rounded-full px-4 py-2 text-sm font-bold transition",
-            !activeCategoryId
-              ? "bg-main text-white shadow"
-              : "border border-slate-300 text-slate-700 hover:border-main hover:text-main",
-          ].join(" ")}
-        >
-          Todas ({totalFiles})
-        </Link>
-        {categories.map((category) => (
-          <CategoryChip
-            key={category.id}
-            categoryId={category.id}
-            name={category.name}
-            fileCount={category._count.files}
-            isActive={activeCategoryId === category.id}
-            href={buildArchivosPageHref({ page: 1, search, categoryId: category.id })}
-            renameAction={renameCategoryFromForm}
-            deleteAction={deleteCategoryFromForm}
-          />
+      <h2 className="text-xl font-bold text-main">Subcarpetas</h2>
+      <div className="mt-4 flex flex-wrap gap-3">
+        {subfolders.map((folder) => (
+          <Link
+            key={folder.id}
+            href={`/admin/archivos?folderId=${folder.id}`}
+            className="rounded-xl border border-slate-200 px-4 py-3 text-sm font-bold text-slate-700 transition hover:border-main hover:text-main"
+          >
+            {folder.name} ({folder._count.files})
+          </Link>
         ))}
-        <NewCategoryChip action={createCategoryFromForm} />
       </div>
     </section>
   );
 }
 
 type FilesPageResult = Awaited<ReturnType<typeof listFileAssetsPage>>;
+type FolderOption = { id: string; name: string; depth: number };
 
 function FileListSection({
   files,
   pagination,
   search,
-  categoryId,
-  categoryName,
+  folderId,
+  folderName,
+  folderOptions,
 }: {
   files: FilesPageResult["items"];
   pagination: FilesPageResult["pagination"];
   search?: string;
-  categoryId?: string;
-  categoryName?: string;
+  folderId?: string;
+  folderName?: string;
+  folderOptions: FolderOption[];
 }) {
-  const hasFilters = Boolean(search || categoryId);
+  const hasFilters = Boolean(search || folderId);
 
   return (
     <section className="rounded-2xl bg-white p-6 shadow-md">
@@ -290,7 +386,7 @@ function FileListSection({
           <h2 className="text-2xl font-bold text-main">Archivos</h2>
           <p className="mt-1 text-sm text-slate-500">
             Página {pagination.page} de {pagination.totalPages} · {pagination.totalItems} archivo(s)
-            {categoryName && <> en &ldquo;{categoryName}&rdquo;</>}
+            {folderName && <> en &ldquo;{folderName}&rdquo;</>}
           </p>
         </div>
 
@@ -298,12 +394,12 @@ function FileListSection({
           <label className="sr-only" htmlFor="archivos-search">
             Buscar archivos
           </label>
-          {categoryId && <input type="hidden" name="categoryId" value={categoryId} />}
+          {folderId && <input type="hidden" name="folderId" value={folderId} />}
           <input
             id="archivos-search"
             name="q"
             defaultValue={search ?? ""}
-            placeholder="Buscar por nombre o categoría"
+            placeholder="Buscar por nombre o carpeta"
             className="min-w-0 flex-1 rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-main focus:ring-2 focus:ring-main/20"
           />
           <button className="rounded-lg bg-main px-5 py-3 font-bold text-white transition hover:bg-blue-800">
@@ -328,21 +424,31 @@ function FileListSection({
             </h3>
             <p className="mt-2 text-sm text-slate-500">
               {hasFilters
-                ? "Probá con otra categoría o nombre, o limpiá los filtros."
+                ? "Probá con otra carpeta o nombre, o limpiá los filtros."
                 : "Subí el primero desde el formulario de arriba."}
             </p>
           </div>
         ) : (
-          files.map((file) => <FileRow key={file.id} file={file} />)
+          files.map((file) => (
+            <FileRow key={file.id} file={file} folderOptions={folderOptions} returnFolderId={folderId ?? null} />
+          ))
         )}
       </div>
 
-      <PaginationControls pagination={pagination} search={search} categoryId={categoryId} />
+      <PaginationControls pagination={pagination} search={search} folderId={folderId} />
     </section>
   );
 }
 
-function FileRow({ file }: { file: FilesPageResult["items"][number] }) {
+function FileRow({
+  file,
+  folderOptions,
+  returnFolderId,
+}: {
+  file: FilesPageResult["items"][number];
+  folderOptions: FolderOption[];
+  returnFolderId: string | null;
+}) {
   return (
     <article className="grid gap-3 rounded-xl border border-slate-200 p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -369,6 +475,7 @@ function FileRow({ file }: { file: FilesPageResult["items"][number] }) {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <form action={renameFileFromForm} className="flex min-w-0 flex-1 items-center gap-3">
           <input type="hidden" name="id" value={file.id} />
+          <input type="hidden" name="returnFolderId" value={returnFolderId ?? ""} />
           <input
             name="name"
             defaultValue={file.name}
@@ -382,15 +489,25 @@ function FileRow({ file }: { file: FilesPageResult["items"][number] }) {
             Renombrar
           </SubmitButton>
         </form>
-        <ConfirmDeleteForm
-          triggerLabel="Eliminar"
-          title="¿Eliminar archivo?"
-          description={`Vas a eliminar "${file.name}". Esta acción no se puede deshacer.`}
-          confirmLabel="Sí, eliminar"
-          pendingLabel="Eliminando…"
-          action={deleteFileFromForm}
-          hiddenFields={{ id: file.id }}
-        />
+        <div className="flex items-center gap-3">
+          <MoveFileForm
+            fileId={file.id}
+            fileName={file.name}
+            currentFolderId={file.categoryId}
+            returnFolderId={returnFolderId}
+            folderOptions={folderOptions}
+            action={moveFileFromForm}
+          />
+          <ConfirmDeleteForm
+            triggerLabel="Eliminar"
+            title="¿Eliminar archivo?"
+            description={`Vas a eliminar "${file.name}". Esta acción no se puede deshacer.`}
+            confirmLabel="Sí, eliminar"
+            pendingLabel="Eliminando…"
+            action={deleteFileFromForm}
+            hiddenFields={{ id: file.id, returnFolderId: returnFolderId ?? "" }}
+          />
+        </div>
       </div>
     </article>
   );
@@ -399,18 +516,18 @@ function FileRow({ file }: { file: FilesPageResult["items"][number] }) {
 function PaginationControls({
   pagination,
   search,
-  categoryId,
+  folderId,
 }: {
   pagination: FilesPageResult["pagination"];
   search?: string;
-  categoryId?: string;
+  folderId?: string;
 }) {
   if (pagination.totalPages <= 1) {
     return null;
   }
 
-  const previousHref = buildArchivosPageHref({ page: pagination.page - 1, search, categoryId });
-  const nextHref = buildArchivosPageHref({ page: pagination.page + 1, search, categoryId });
+  const previousHref = buildArchivosPageHref({ page: pagination.page - 1, search, folderId });
+  const nextHref = buildArchivosPageHref({ page: pagination.page + 1, search, folderId });
 
   return (
     <nav
@@ -441,11 +558,11 @@ function PaginationControls({
 function buildArchivosPageHref({
   page,
   search,
-  categoryId,
+  folderId,
 }: {
   page: number;
   search?: string;
-  categoryId?: string;
+  folderId?: string;
 }) {
   const params = new URLSearchParams({ page: String(page) });
 
@@ -453,8 +570,8 @@ function buildArchivosPageHref({
     params.set("q", search);
   }
 
-  if (categoryId) {
-    params.set("categoryId", categoryId);
+  if (folderId) {
+    params.set("folderId", folderId);
   }
 
   return `/admin/archivos?${params.toString()}`;

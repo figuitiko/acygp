@@ -1,18 +1,23 @@
 "use client";
 
-import { useState } from "react";
-
 import { SubmitButton } from "@/features/admin/submit-button";
 
-type Category = { id: string; name: string };
+type FolderOption = { id: string; name: string; depth: number };
 
 type UploadFileFormProps = {
-  categories: Category[];
+  folderOptions: FolderOption[];
+  defaultFolderId: string | null;
   action: (formData: FormData) => void | Promise<void>;
 };
 
-export function UploadFileForm({ categories, action }: UploadFileFormProps) {
-  const [isCreatingCategory, setIsCreatingCategory] = useState(categories.length === 0);
+export function UploadFileForm({ folderOptions, defaultFolderId, action }: UploadFileFormProps) {
+  if (folderOptions.length === 0) {
+    return (
+      <p className="rounded-lg border border-dashed border-slate-300 px-4 py-3 text-sm text-slate-500">
+        Creá una carpeta antes de subir archivos.
+      </p>
+    );
+  }
 
   return (
     <form action={action} className="flex flex-col gap-4" encType="multipart/form-data">
@@ -26,42 +31,22 @@ export function UploadFileForm({ categories, action }: UploadFileFormProps) {
         />
       </label>
 
-      {isCreatingCategory ? (
-        <label className="flex flex-col gap-2 text-sm font-semibold text-slate-700">
-          Nueva categoría
-          <input
-            name="newCategoryName"
-            required
-            placeholder="Ej. Formularios"
-            className="rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-main focus:ring-2 focus:ring-main/20"
-          />
-        </label>
-      ) : (
-        <label className="flex flex-col gap-2 text-sm font-semibold text-slate-700">
-          Categoría
-          <select
-            name="categoryId"
-            required
-            className="rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-main focus:ring-2 focus:ring-main/20"
-          >
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </label>
-      )}
-
-      {categories.length > 0 && (
-        <button
-          type="button"
-          onClick={() => setIsCreatingCategory((current) => !current)}
-          className="self-start text-sm font-bold text-main hover:underline"
+      <label className="flex flex-col gap-2 text-sm font-semibold text-slate-700">
+        Carpeta
+        <select
+          name="folderId"
+          required
+          defaultValue={defaultFolderId ?? folderOptions[0].id}
+          className="rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-main focus:ring-2 focus:ring-main/20"
         >
-          {isCreatingCategory ? "Elegir categoría existente" : "+ Nueva categoría"}
-        </button>
-      )}
+          {folderOptions.map((folder) => (
+            <option key={folder.id} value={folder.id}>
+              {"  ".repeat(folder.depth)}
+              {folder.name}
+            </option>
+          ))}
+        </select>
+      </label>
 
       <SubmitButton
         className="rounded-lg bg-main px-4 py-3 font-bold text-white transition hover:bg-blue-800"

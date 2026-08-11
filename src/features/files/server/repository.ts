@@ -8,51 +8,75 @@ import { normalizeFileSearchTerm } from "../domain/search";
 
 const FILES_PAGE_SIZE = 10;
 
-export class CategoryInUseError extends Error {}
+export class FolderNameExistsError extends Error {}
 
-export class CategoryExistsError extends Error {}
+export class FolderHasFilesError extends Error {}
 
-export async function listCategoriesWithCounts() {
+export class FolderHasSubfoldersError extends Error {}
+
+export class FolderNotFoundError extends Error {}
+
+export async function listFoldersWithCounts() {
   return prisma.fileCategory.findMany({
     orderBy: { name: "asc" },
-    include: { _count: { select: { files: true } } },
+    include: { _count: { select: { files: true, children: true } } },
   });
 }
 
-export async function createCategory(name: string) {
+async function assertSiblingNameAvailable(name: string, parentId: string | null, excludeId?: string) {
+  const existing = await prisma.fileCategory.findFirst({
+    where: { name, parentId, ...(excludeId ? { id: { not: excludeId } } : {}) },
+  });
+
+  if (existing) {
+    throw new FolderNameExistsError(`Folder "${name}" already exists in this location`);
+  }
+}
+
+export async function createFolder(name: string, parentId: string | null) {
+  await assertSiblingNameAvailable(name, parentId);
+
   try {
-    return await prisma.fileCategory.create({ data: { name } });
+    return await prisma.fileCategory.create({ data: { name, parentId } });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-      throw new CategoryExistsError(`Category "${name}" already exists`);
+      throw new FolderNameExistsError(`Folder "${name}" already exists in this location`);
     }
 
     throw error;
   }
 }
 
-export async function renameCategory(id: string, name: string) {
+export async function renameFolder(id: string, name: string) {
+  const folder = await prisma.fileCategory.findUniqueOrThrow({ where: { id } });
+  await assertSiblingNameAvailable(name, folder.parentId, id);
+
   try {
     return await prisma.fileCategory.update({ where: { id }, data: { name } });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-      throw new CategoryExistsError(`Category "${name}" already exists`);
+      throw new FolderNameExistsError(`Folder "${name}" already exists in this location`);
     }
 
     throw error;
   }
 }
 
-export async function deleteCategory(id: string) {
-  try {
-    await prisma.fileCategory.delete({ where: { id } });
-  } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2003") {
-      throw new CategoryInUseError(`Category ${id} still has files assigned`);
-    }
+export async function deleteFolder(id: string) {
+  const counts = await prisma.fileCategory.findUniqueOrThrow({
+    where: { id },
+    include: { _count: { select: { files: true, children: true } } },
+  });
 
-    throw error;
+  if (counts._count.files > 0) {
+    throw new FolderHasFilesError(`Folder ${id} still has files assigned`);
   }
+
+  if (counts._count.children > 0) {
+    throw new FolderHasSubfoldersError(`Folder ${id} still has subfolders`);
+  }
+
+  return prisma.fileCategory.delete({ where: { id } });
 }
 
 export type CreateFileAssetInput = {
@@ -68,26 +92,6 @@ export async function createFileAsset(input: CreateFileAssetInput) {
   return prisma.fileAsset.create({ data: input });
 }
 
-export type CreateFileAssetWithNewCategoryInput = Omit<CreateFileAssetInput, "categoryId"> & {
-  categoryName: string;
-};
-
-export async function createFileAssetWithNewCategory(input: CreateFileAssetWithNewCategoryInput) {
-  const { categoryName, ...fileInput } = input;
-
-  return prisma.$transaction(async (tx) => {
-    const category = await tx.fileCategory.upsert({
-      where: { name: categoryName },
-      create: { name: categoryName },
-      update: {},
-    });
-
-    return tx.fileAsset.create({
-      data: { ...fileInput, categoryId: category.id },
-    });
-  });
-}
-
 export async function getFileAssetById(id: string) {
   return prisma.fileAsset.findUnique({ where: { id } });
 }
@@ -100,16 +104,25 @@ export async function deleteFileAsset(id: string) {
   await prisma.fileAsset.delete({ where: { id } });
 }
 
+export async function moveFileToFolder(fileId: string, targetFolderId: string) {
+  const folder = await prisma.fileCategory.findUnique({ where: { id: targetFolderId } });
+  if (!folder) {
+    throw new FolderNotFoundError(`Folder ${targetFolderId} does not exist`);
+  }
+
+  return prisma.fileAsset.update({ where: { id: fileId }, data: { categoryId: targetFolderId } });
+}
+
 export async function listFileAssetsPage({
   page,
   search,
-  categoryId,
+  folderId,
 }: {
   page?: string | number | null;
   search?: string | null;
-  categoryId?: string | null;
+  folderId?: string | null;
 } = {}) {
-  const where = createFileAssetsWhere(search, categoryId);
+  const where = createFileAssetsWhere(search, folderId);
   const totalItems = await prisma.fileAsset.count({ where });
   const pagination = createPagination({ page, pageSize: FILES_PAGE_SIZE, totalItems });
 
@@ -126,7 +139,7 @@ export async function listFileAssetsPage({
 
 function createFileAssetsWhere(
   search: string | null | undefined,
-  categoryId: string | null | undefined
+  folderId: string | null | undefined
 ): FileAssetWhereInput | undefined {
   const normalizedSearch = normalizeFileSearchTerm(search);
   const searchClause: FileAssetWhereInput | undefined = normalizedSearch
@@ -138,9 +151,9 @@ function createFileAssetsWhere(
       }
     : undefined;
 
-  if (searchClause && categoryId) {
-    return { AND: [searchClause, { categoryId }] };
+  if (searchClause && folderId) {
+    return { AND: [searchClause, { categoryId: folderId }] };
   }
 
-  return searchClause ?? (categoryId ? { categoryId } : undefined);
+  return searchClause ?? (folderId ? { categoryId: folderId } : undefined);
 }

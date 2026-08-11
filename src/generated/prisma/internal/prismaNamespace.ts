@@ -1068,6 +1068,7 @@ export type EvaluationAnswerScalarFieldEnum = (typeof EvaluationAnswerScalarFiel
 export const FileCategoryScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  parentId: 'parentId',
   createdAt: 'createdAt'
 } as const
 
